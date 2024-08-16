@@ -42,7 +42,7 @@ const Chart: React.FC = () => {
     };
 
     return (
-        <div style={{ width: '600px', height: '400px' }}>
+        <div style={{ width: '50em', height: '25em' }}>
             <Line data={data} options={options}/>
         </div>
         );
