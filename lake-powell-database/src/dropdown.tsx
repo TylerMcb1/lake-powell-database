@@ -15,7 +15,7 @@ const Dropdown = () => {
     };
 
     return (
-        <>
+        <div>
             <label htmlFor="dropdown">Choose an option: </label>
             <select id="dropdown" value={selectedOption} onChange={handleChange}>
                 {options.map((option) => (
@@ -24,9 +24,9 @@ const Dropdown = () => {
                 </option>
                 ))}
             </select>
-            <div/>
+            <p/>
             <b>{selectedOption} For Past 14 Days</b>
-        </>
+        </div>
     );
 };
 

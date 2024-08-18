@@ -6,9 +6,9 @@ import './App.css'
 function App() {
     return (
         <>
-        <div><Dropdown/></div>
-        <div><Chart/></div>
-        <div><Table/></div>
+        <Dropdown/>
+        <Chart/>
+        <Table/>
         </>
     );
 };

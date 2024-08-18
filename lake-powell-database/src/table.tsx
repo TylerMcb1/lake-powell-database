@@ -9,28 +9,30 @@ const Table = () => {
     ])
 
     return (
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Water Level</th>
-                    <th>Temperature</th>
-                    <th>Inflow</th>
-                    <th>Outflow</th>
-                </tr>
-            </thead>
-                <tbody>
-                {readings.map(reading => (
+        <div>
+            <table>
+                <thead>
                     <tr>
-                        <td>{reading.date}</td>
-                        <td>{reading.waterLevel}</td>
-                        <td>{reading.temperature}</td>
-                        <td>{reading.inflow}</td>
-                        <td>{reading.outflow}</td>
+                        <th>Date</th>
+                        <th>Water Level</th>
+                        <th>Temperature</th>
+                        <th>Inflow</th>
+                        <th>Outflow</th>
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                    <tbody>
+                    {readings.map(reading => (
+                        <tr>
+                            <td>{reading.date}</td>
+                            <td>{reading.waterLevel}</td>
+                            <td>{reading.temperature}</td>
+                            <td>{reading.inflow}</td>
+                            <td>{reading.outflow}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
     );
 }
 
