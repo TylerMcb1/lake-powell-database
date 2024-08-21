@@ -7,7 +7,9 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/record", records);
+
+// Mount the records router on the '/records' path
+app.use('/records', records);
 
 // Start the Express server
 app.listen(PORT, () => {

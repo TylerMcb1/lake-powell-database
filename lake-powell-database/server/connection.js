@@ -14,7 +14,7 @@ if (!uri) {
     console.error("Error: Unable to retrieve environment URI variable")
 }
 
-let db = null;
+let db;
 
 try {
     await client.connect();
@@ -26,7 +26,7 @@ try {
     await client.close();
 }
 
-if (db === null) {
+if (!db) {
     console.error("Error: Unable to collect database information")
 }
 
