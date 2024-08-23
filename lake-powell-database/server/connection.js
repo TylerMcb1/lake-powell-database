@@ -1,6 +1,7 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import 'dotenv/config';
 
+let db = null;
 const uri = process.env.URI;
 const client = new MongoClient(uri, {
     serverApi: {
@@ -14,20 +15,27 @@ if (!uri) {
     console.error("Error: Unable to retrieve environment URI variable")
 }
 
-let db;
-
-try {
-    await client.connect();
-    console.log("Successfully connected to database")
-    db = client.db("LP-WATER-DATA")
-} catch(e) {
-    console.error(e);
-} finally {
-    await client.close();
+export async function openConnection() {
+    try {
+        await client.connect();
+        console.log("Successfully connected to database");
+    } catch(e) {
+        console.error("Error connecting to database: ", e);
+        throw e;
+    }
 }
 
-if (!db) {
-    console.error("Error: Unable to collect database information")
+export function getDB() {
+    if (!db) {
+        db = client.db("LP-WATER-DATA");
+    }
+    return db;
 }
 
-export default db;
+export async function closeConnection() {
+    try {
+        await client.disconnect();
+    } catch (e) {
+        console.error("Error disconnecting from database: ", e)
+    }
+}
