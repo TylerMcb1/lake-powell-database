@@ -14,7 +14,7 @@ app.use(express.json());
     try {
         await openConnection();
 
-        // Mount the records router on the '/records' path
+        // Mount the records router on the '/' path
         app.use('/', records);
 
         app.listen(PORT, () => {
