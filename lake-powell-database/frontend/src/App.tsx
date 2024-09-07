@@ -6,7 +6,6 @@ import './App.css'
 function App() {
     return (
         <>
-        <Dropdown/>
         <Chart/>
         <Table/>
         </>
