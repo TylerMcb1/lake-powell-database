@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
+import Slider from '@mui/material/Slider';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -55,7 +56,7 @@ const FieldOptions: TableField[] = [
     { key: 'Evaporation', value: 'Evaporation (af)'}
 ];
 
-const DateOptions: number[] = [14, 365];
+const DateRange: number[] = [14, 365];
 
 const Chart: React.FC = () => {
     const [readings, setReadings] = useState<Reading[]>([]);
@@ -65,14 +66,14 @@ const Chart: React.FC = () => {
     const [chartData, setChartData] = useState<ChartData>({
         labels: [],
         datasets: [
-          {
-            label: '',
-            backgroundColor: '',
-            borderColor: '',
-            data: [],
-          },
+            {
+                label: '',
+                backgroundColor: '',
+                borderColor: '',
+                data: [],
+            },
         ],
-      });
+    });
 
     useEffect(() => {
         const fetchChartData = async () => {
@@ -142,14 +143,14 @@ const Chart: React.FC = () => {
         setSelectedField(event.target.value);
     };
 
-    const handleDateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedDateRange(parseInt(event.target.value));
+    const handleDateChange = (event: Event, value: number | number[]) => {
+        setSelectedDateRange(Array.isArray(value) ? value[0] : value);
     };
 
     return (
         <>
-        <div className="dropdown">
-            <label htmlFor="dropdown">Choose an option: </label>
+        <div>
+            <label>Select a field: </label>
             <select id="dropdown" value={selectedField} onChange={handleFieldChange}>
                 {FieldOptions.map((option) => (
                 <option key={option.key} value={option.value}>
@@ -157,13 +158,15 @@ const Chart: React.FC = () => {
                 </option>
                 ))}
             </select>
-            <select id="dropdown" value={selectedDateRange} onChange={handleDateChange}>
-                {DateOptions.map((option) => (
-                <option key={option} value={option}>
-                    {option}
-                </option>
-                ))}
-            </select>
+        </div>
+        <div>
+            <label>Select a time range: {selectedDateRange} days</label>
+            <Slider
+                defaultValue={DateRange[0]}
+                min={DateRange[0]}
+                max={DateRange[1]}
+                onChange={handleDateChange}
+            />
         </div>
         <b>{selectedField} For Past {selectedDateRange} Days</b>
         <div style={{ width: '50em', height: '25em' }}>
