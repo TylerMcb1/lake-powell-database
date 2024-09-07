@@ -10,8 +10,8 @@ router.get('/', async (req, res) => {
         let collection = await db.collection("LP");
         let results = await collection.find({}).toArray();
         res.send(JSON.stringify(results)).status(200);
-    } catch (e) {
-        res.status(500).send({ message: "Error fetching record", error: e.message });
+    } catch (error) {
+        res.status(500).send({ message: "Error fetching record: ", error: e.message });
     }
 });
 
@@ -22,8 +22,8 @@ router.get('/id/:id', async(req, res) => {
         let query = {_id: new ObjectId(req.params.id)};
         let result = await collection.findOne(query);
         res.send(JSON.stringify(result)).status(200);
-    } catch (e) {
-        res.status(500).send({ message: "Error fetching record", error: e.message });
+    } catch (error) {
+        res.status(500).send({ message: "Error fetching record: ", error: e.message });
     }
 });
 
@@ -40,8 +40,8 @@ router.get('/last-14-days', async(req, res) => {
 
         let results = await collection.find(query).sort({ "Date": -1}).toArray();
         res.send(JSON.stringify(results, null, 2)).status(200);
-    } catch (e) {
-        res.status(500).send({ message: "Error fetching record", error: e.message });
+    } catch (error) {
+        res.status(500).send({ message: "Error fetching record: ", error: e.message });
     }
 });
 
@@ -57,8 +57,20 @@ router.get('/last-365-days', async(req, res) => {
         };
         let results = await collection.find(query).sort({ "Date": -1}).toArray();
         res.send(JSON.stringify(results, null, 2)).status(200);
-    } catch (e) {
-        res.status(500).send({ message: "Error fetching record", error: e.message });
+    } catch (error) {
+        res.status(500).send({ message: "Error fetching record: ", error: e.message });
+    }
+});
+
+router.post('/new-reading' , async(req, res) => {
+    try {
+        const db = getDB()
+        let collection = await db.collection("LP");
+        
+        await collection.insertOne(req.body);
+        res.send(JSON.stringify({ message: 'Data received successfully', data: req.body })).status(200);
+    } catch (error) {
+        res.status(500).send({ message: "Error posting record: ", error: e.message})
     }
 });
 

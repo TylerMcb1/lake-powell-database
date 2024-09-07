@@ -61,8 +61,8 @@ const DateRange: number[] = [14, 365];
 const Chart: React.FC = () => {
     const [readings, setReadings] = useState<Reading[]>([]);
 
-    const [selectedField, setSelectedField] = useState('Elevation (feet)');
-    const [selectedDateRange, setSelectedDateRange] = useState(14);
+    const [selectedField, setSelectedField] = useState<string>('Elevation (feet)');
+    const [selectedDateRange, setSelectedDateRange] = useState<number>(14);
     const [chartData, setChartData] = useState<ChartData>({
         labels: [],
         datasets: [
@@ -110,7 +110,7 @@ const Chart: React.FC = () => {
 
         updateData();
 
-    }, [selectedField, selectedDateRange]);
+    }, [selectedField, selectedDateRange, readings]);
 
     const setData = (field: keyof Reading): number[] => {
         return readings
