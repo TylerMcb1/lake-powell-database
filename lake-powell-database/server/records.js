@@ -62,20 +62,27 @@ router.get('/last-365-days', async(req, res) => {
     }
 });
 
-router.post('/new-reading' , async(req, res) => {
+router.post('/new-reading' , async(req, res, next) => {
     try {
         const db = getDB()
-        let collection = await db.collection('Test');
+        let collection = await db.collection('LP');
         
         // Convert Date strings to Date objects
-        if (req.body.Date) {
-            req.body.Date = new Date(req.body.Date);
+        if (req.body.Date && typeof req.body.Date === 'string') {
+            const parsedDate = new Date(new Date(req.body.Date).setUTCHours(0));
+            if (!isNaN(parsedDate.getTime())) {
+                req.body.Date = parsedDate;
+            } else { // Handle invalid date format
+                res.status(400).send({ message: 'Invalid date format' });
+                return next(new Error('Error posting record: Invalid date format'));
+            }
         }
 
-        await collection.insertOne(req.body);
+        const result = await collection.insertOne(req.body);
+        console.log('Insert Result:', result);
         res.send({ message: 'Data received successfully', data: req.body }).status(200);
     } catch (error) {
-        res.status(500).send({ message: 'Error posting record: ', error: e.message})
+        next(error);
     }
 });
 

@@ -34,7 +34,7 @@ export function getDB() {
 
 export async function closeConnection() {
     try {
-        await client.disconnect();
+        await client.close();
     } catch (e) {
         console.error("Error disconnecting from database: ", e)
     }
