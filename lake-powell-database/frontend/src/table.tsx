@@ -19,7 +19,6 @@ const TableFields: TableField[] = [
     {key: 'Date', value: 'Date'},
     {key: 'Water Level', value: 'Elevation (feet)'},
     {key: 'Storage', value: 'Storage (af)'},
-    {key: 'Evaporation', value: 'Evaporation (af)'},
     {key: 'Inflow', value: 'Inflow** (cfs)'},
     {key: 'Outflow', value: 'Total Release (cfs)'}
 ];

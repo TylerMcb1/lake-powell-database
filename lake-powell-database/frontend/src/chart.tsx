@@ -52,8 +52,7 @@ const FieldOptions: TableField[] = [
     { key: 'Water Level', value: 'Elevation (feet)' },
     { key: 'Inflows', value: 'Inflow** (cfs)' },
     { key: 'Outflows', value: 'Total Release (cfs)' },
-    { key: 'Storage', value: 'Storage (af)' },
-    { key: 'Evaporation', value: 'Evaporation (af)'}
+    { key: 'Storage', value: 'Storage (af)' }
 ];
 
 const DateRange: number[] = [14, 365];
