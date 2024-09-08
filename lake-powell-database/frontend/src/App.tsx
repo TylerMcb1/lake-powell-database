@@ -1,7 +1,6 @@
-import Dropdown from './dropdown'
-import Chart from './chart'
-import Table from './table'
-import './App.css'
+import Chart from './chart';
+import Table from './table';
+import './App.css';
 
 function App() {
     return (

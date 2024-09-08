@@ -114,14 +114,14 @@ const Chart: React.FC = () => {
 
     const setData = (field: keyof Reading): number[] => {
         return readings
-        .filter(reading => {
-            const currDate = new Date(reading['Date']);
-            const referenceDate = new Date(readings[0]['Date']);
-            referenceDate.setDate(referenceDate.getDate() - selectedDateRange);
-            return currDate >= referenceDate;
-        })
-        .map(reading => typeof reading[field] === 'number' ? reading[field] : 0)
-        .reverse();
+            .filter(reading => {
+                const currDate = new Date(reading['Date']);
+                const referenceDate = new Date(readings[0]['Date']);
+                referenceDate.setDate(referenceDate.getDate() - selectedDateRange);
+                return currDate >= referenceDate;
+            })
+            .map(reading => typeof reading[field] === 'number' ? reading[field] : 0)
+            .reverse();
     };
 
     const setDates = (): string[] => {
@@ -133,9 +133,10 @@ const Chart: React.FC = () => {
                 return currDate >= referenceDate;
             })
             .map(reading => new Date(reading['Date']).toLocaleDateString('en-US', {
-                    month: '2-digit',
-                    day: '2-digit'
-                }))
+                month: '2-digit',
+                day: '2-digit',
+                timeZone: 'UTC'
+            }))
             .reverse();
     };
 

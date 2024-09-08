@@ -50,7 +50,8 @@ const Table = () => {
     const formatDate = (dateString: string): string => {
         const options: Intl.DateTimeFormatOptions = {
             month: '2-digit',
-            day: '2-digit'
+            day: '2-digit',
+            timeZone: 'UTC'
         };
         return new Date(dateString).toLocaleDateString('en-US', options);
     };
