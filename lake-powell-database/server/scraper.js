@@ -3,7 +3,7 @@ import * as cheerio from 'cheerio';
 
 const url = 'https://www.usbr.gov/rsvrWater/rsv40Day.html?siteid=919&reservoirtype=Reservoir';
 
-export async function Scraper() {
+export async function scrapeData() {
     try {
         // Obtain webpage with puppeteer
         const browser = await puppeteer.launch();
@@ -28,8 +28,9 @@ export async function Scraper() {
             }
         });
 
-        console.log('First Table Row Entries: ', recordData);
+        // Close browser and returned scraped data
         await browser.close();
+        return recordData;
     } catch (error) {
         console.error('Error scraping table entry: ', error.message);
     }

@@ -1,16 +1,24 @@
 import axios from 'axios';
+import { scrapeData } from './scraper.js'
 
-const url = 'http://localhost:5050/new-reading';
-const exampleData = {
-    Date: '07-Sep-2024',
-    "Elevation (feet)": 3580.34,
-    "Storage (af)": 9321418,
-    "Inflow** (cfs)": 4755,
-    "Total Release (cfs)": 9371,
-};
+const data = await scrapeData();
+const recordFields = [
+    "Date",
+    "Elevation (feet)",
+    "Storage (af)",
+    "Inflow** (cfs)",
+    "Total Release (cfs)",
+];
 
 const dataEntry = async (data) => {
-    await axios.post(url, data)
+    // Convert data to record object
+    const recordData = recordFields.reduce((acc, field, index) => {
+        acc[field] = data[index];
+        return acc;
+    }, {});
+
+    // Post record to API endpoint
+    await axios.post('http://localhost:5050/new-reading', recordData)
         .then(response => {
             console.log('POST request success: ', response.data);
         })
@@ -19,8 +27,5 @@ const dataEntry = async (data) => {
         });
 };
 
-// const convertData = () => {} // Method to convert scraped data into record object
-
-dataEntry(exampleData);
-
+dataEntry(data);
 // const intervalId = setInterval(dataEntry, 10000);
