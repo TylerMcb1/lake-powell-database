@@ -21,11 +21,17 @@ const pages: NavigateType[] = [
 
 const Navbar: React.FC = () => {
     return (
-        <nav>
-            <ul>
+        <nav className='flex items-center w-full h-24 flex bg-primary text-title font-sans px-4'>
+            <label className='flex-grow'>Colorado River Data</label>
+            <ul className='flex items-center space-x-5 ml-auto'>
                 {pages.map((page, index) => (
                     <li key={index}>
-                        <Link to={page.path}>{page.name}</Link>
+                        <Link 
+                            to={page.path}
+                            className='hover:text-dark_gray'
+                        >
+                            {page.name}
+                        </Link>
                     </li>
                 ))}
             </ul>
