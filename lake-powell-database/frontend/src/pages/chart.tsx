@@ -77,7 +77,7 @@ const Chart: React.FC = () => {
     useEffect(() => {
         const fetchChartData = async () => {
             try {
-                const response = await fetch('http://localhost:5050/last-365-days')
+                const response = await fetch('http://localhost:5050/powell/last-365-days')
                 if (!response) {
                     console.error('Unsucessful retrieval of database');
                 }

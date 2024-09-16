@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Reading {
     _id: string;
@@ -23,13 +23,13 @@ const TableFields: TableField[] = [
     {key: 'Outflow', value: 'Total Release (cfs)'}
 ];
 
-const Table = () => {
+const Table: React.FC = () => {
     const [readings, setReadings] = useState<Reading[]>([]);
 
     useEffect(() => {
         const fetchChartData = async () => {
             try {
-                const response = await fetch('http://localhost:5050/last-14-days')
+                const response = await fetch('http://localhost:5050/powell/last-14-days')
                 if (!response.ok) {
                     console.error('Unsucessful retrieval of database');
                 }

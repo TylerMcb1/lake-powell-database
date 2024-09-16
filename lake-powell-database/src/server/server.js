@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import records from './records.js';
+import powellRecords from './powell.js';
 import { openConnection, closeConnection } from './connection.js';
 
 const PORT = process.env.PORT || 5050;
@@ -33,8 +33,8 @@ const shutDown = async () => {
     try {
         await openConnection();
 
-        // Mount the records router on the '/' path
-        app.use('/', records);
+        // Mount the powell records router on the '/' path
+        app.use('/powell/', powellRecords);
 
         // Error handling middleware
         app.use((err, req, res, next) => {
