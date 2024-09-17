@@ -1,11 +1,14 @@
-import Chart from '../chart';
-import Table from '../table';
+import React from 'react';
+import Navbar from '../elements/navbar';
+import Chart from '../elements/chart';
+import Table from '../elements/table';
 
-const LakePowell = () => {
+const LakePowell: React.FC = () => {
     return (
         <>
-            <Chart/>
-            <Table/>
+            <Navbar />
+            <Chart />
+            <Table />
         </>
     );
 };
