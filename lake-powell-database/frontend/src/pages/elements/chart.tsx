@@ -11,7 +11,6 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
-// import { IntegerType } from 'mongodb';
   
 ChartJS.register(
     CategoryScale,
@@ -98,10 +97,10 @@ const Chart: React.FC = () => {
             labels: setDates(),
             datasets: [
                 {
-                label: 'Lake Powell Elevations',
-                backgroundColor: 'rgba(75,192,192,0.4)',
-                borderColor: 'rgba(75,192,192,1)',
-                data: setData(selectedField as keyof Reading),
+                    label: `Lake Powell ${selectedField}`,
+                    backgroundColor: 'rgba(75,192,192,0.4)',
+                    borderColor: 'rgba(75,192,192,1)',
+                    data: setData(selectedField as keyof Reading),
                 },
             ],
             });
@@ -159,6 +158,10 @@ const Chart: React.FC = () => {
                 ))}
             </select>
         </div>
+        <b>{selectedField} For Past {selectedDateRange} Days</b>
+        <div style={{ width: '50em', height: '25em' }}>
+            <Line data={chartData} options={{}}/>
+        </div>
         <div>
             <label>Select a time range: {selectedDateRange} days</label>
             <Slider
@@ -167,10 +170,6 @@ const Chart: React.FC = () => {
                 max={DateRange[1]}
                 onChange={handleDateChange}
             />
-        </div>
-        <b>{selectedField} For Past {selectedDateRange} Days</b>
-        <div style={{ width: '50em', height: '25em' }}>
-            <Line data={chartData} options={{}}/>
         </div>
         </>
     );
