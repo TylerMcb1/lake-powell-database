@@ -20,8 +20,18 @@ ChartJS.register(
     LineElement,
     Title,
     Tooltip,
-Legend
+    Legend,
 );
+
+type ChartData = {
+    labels: string[];
+    datasets: {
+        label: string;
+        backgroundColor: string;
+        borderColor: string;
+        data: (number | null)[];
+    }[];
+};
 
 interface Reading {
     _id: string;
@@ -38,16 +48,6 @@ interface TableField {
     value: string;
 };
 
-type ChartData = {
-    labels: string[];
-    datasets: {
-        label: string;
-        backgroundColor: string;
-        borderColor: string;
-        data: (number | null)[];
-    }[];
-};
-
 const FieldOptions: TableField[] = [
     { key: 'Water Level', value: 'Elevation (feet)' },
     { key: 'Inflows', value: 'Inflow** (cfs)' },
@@ -55,19 +55,29 @@ const FieldOptions: TableField[] = [
     { key: 'Storage', value: 'Storage (af)' }
 ];
 
-const Years: number[] = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+const TableFields: TableField[] = [
+    {key: 'Date', value: 'Date'},
+    {key: 'Water Level', value: 'Elevation (feet)'},
+    {key: 'Storage', value: 'Storage (af)'},
+    {key: 'Inflow', value: 'Inflow** (cfs)'},
+    {key: 'Outflow', value: 'Total Release (cfs)'}
+];
 
+const Years: number[] = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023];
+const ExportOptions: string[] = ['PDF', 'JPEG', 'PNG', 'BNF'];
 const DateRange: number[] = [14, 365];
 
 const LakePowell: React.FC = () => {
     const [selectedField, setSelectedField] = useState<string>('Elevation (feet)');
     const [selectedDateRange, setSelectedDateRange] = useState<number>(14);
     const [selectedOverlay, setSelectedOverlay] = useState<number>(0);
+    const [selectedExport, setSelectedExport] = useState<string>('PDF');
 
     const [selectedTimeTab, setSelectedTimeTab] = useState('current');
     const [selectedOptionsTab, setSelectedOptionsTab] = useState('options');
 
     const [readings, setReadings] = useState<Reading[]>([]);
+    const [tableReadings, setTableReadings] = useState<Reading[]>([]);
     const [chartData, setChartData] = useState<ChartData>({
         labels: [],
         datasets: [
@@ -95,7 +105,21 @@ const LakePowell: React.FC = () => {
             }
         };
 
+        const setTableData = (dateRange: number) => {
+            setTableReadings(
+                readings
+                    .filter(reading => {
+                        const currDate = new Date(reading['Date']);
+                        const referenceDate = new Date(readings[0]['Date']);
+                        referenceDate.setDate(referenceDate.getDate() - dateRange);
+                        return currDate >= referenceDate;
+                    })
+            );
+        };
+
         fetchChartData();
+        setTableData(14);
+
     }, []);
 
     useEffect(() => {
@@ -145,23 +169,37 @@ const LakePowell: React.FC = () => {
             .reverse();
     };
 
-    const handleFieldChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedField(event.target.value);
+    // Convert ISO date string to a readable format
+    const formatDate = (dateString: string): string => {
+        const options: Intl.DateTimeFormatOptions = {
+            month: '2-digit',
+            day: '2-digit',
+            timeZone: 'UTC'
+        };
+        return new Date(dateString).toLocaleDateString('en-US', options);
     };
 
     const handleDateChange = (event: Event, value: number | number[]) => {
         setSelectedDateRange(Array.isArray(value) ? value[0] : value);
     };
 
+    const handleFieldChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedField(event.target.value);
+    };
+
     const handleOverlayChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedOverlay(Number(event.target.value));
+    };
+
+    const handleExportChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedExport(event.target.value);
     };
 
     return (
         <div>
             <Navbar />
             <div className='bg-background rounded-lg shadow-xl m-4 flex flex-col items-center'>
-                <div className='w-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-subtitle rounded-t-lg h-12'>
+                <div className='w-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-subtitle rounded-t-lg h-8'>
                     <label>Lake Powell {selectedField}</label>
                 </div>
                 <div className='w-full max-w-4xl p-5 relative'>
@@ -248,44 +286,86 @@ const LakePowell: React.FC = () => {
                             Export
                         </button>
                     </div>
-                    <div className='flex w-full justify-center'>
-                        <div className='flex flex-col'>
-                            <div className='flex items-center space-x-1'>
-                                <label>Max</label>
-                                <input type='checkbox' id='max' className='rounded-md shadow-lg' />
+                    {selectedOptionsTab === 'options' ? (
+                        <div className='w-full'>
+                            <div className='flex w-full justify-center p-4'>
+                                <div className='flex flex-col'>
+                                    <div className='flex items-center space-x-1'>
+                                        <label>Max</label>
+                                        <input type='checkbox' id='max' className='rounded-md shadow-lg' />
+                                    </div>
+                                    <div className='flex items-center space-x-1'>
+                                        <label>Median</label>
+                                        <input type='checkbox' id='max' className='rounded-md shadow-lg' />
+                                    </div>
+                                </div>
+                                <div className='flex flex-col'>
+                                    <div className='flex items-center space-x-1'>
+                                        <label>Select a field:</label>
+                                        <select value={selectedField} onChange={handleFieldChange}  className='rounded-md shadow-lg mx-1 px-1'>
+                                            {FieldOptions.map((option) => (
+                                            <option key={option.key} value={option.value}>
+                                                {option.key}
+                                            </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className='flex items-center space-x-1'>
+                                        <label>Historical Overlay:</label>
+                                        <select value={selectedOverlay} onChange={handleOverlayChange}  className='rounded-md shadow-lg mx-1 px-1'>
+                                            {Years.map((year, index) => (
+                                            <option key={index} value={year}>
+                                                {year}
+                                            </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                            <div className='flex items-center space-x-1'>
-                                <label>Median</label>
-                                <input type='checkbox' id='max' className='rounded-md shadow-lg' />
+                            <div className='w-full flex justify-end'>
+                                <button className='bg-primary text-black rounded-lg shadow-lg px-4 mb-2 mr-2'>Go</button>
                             </div>
                         </div>
-                        <div className='flex flex-col'>
-                            <div className='flex items-center space-x-1'>
-                                <label>Select a field:</label>
-                                <select value={selectedField} onChange={handleFieldChange}  className='rounded-md shadow-lg mx-1 px-1'>
-                                    {FieldOptions.map((option) => (
-                                    <option key={option.key} value={option.value}>
-                                        {option.key}
+                    ) : (
+                        <div className='w-full'>
+                             <div className='flex justify-center items-center space-x-1'>
+                                <label>Export As:</label>
+                                <select value={selectedExport} onChange={handleExportChange}  className='rounded-md shadow-lg mx-1 px-1'>
+                                    {ExportOptions.map((option, index) => (
+                                    <option key={index} value={option}>
+                                        {option}
                                     </option>
                                     ))}
                                 </select>
                             </div>
-                            <div className='flex items-center space-x-1'>
-                                <label>Historical Overlay:</label>
-                                <select value={selectedOverlay} onChange={handleOverlayChange}  className='rounded-md shadow-lg mx-1 px-1'>
-                                    {Years.map((year, index) => (
-                                    <option key={index} value={year}>
-                                        {year}
-                                    </option>
-                                    ))}
-                                </select>
+                            <div className='w-full flex justify-end'>
+                                <button className='bg-primary text-black rounded-lg shadow-lg px-4 mb-2 mr-2'>Go</button>
                             </div>
                         </div>
-                    </div>
-                    <div className='w-full flex justify-end'>
-                        <button className='bg-primary text-black rounded-lg shadow-lg px-4 mb-2 mr-2'>Go</button>
-                    </div>
+                    )}
                 </div>
+            </div>
+            <div className='bg-background rounded-lg shadow-xl m-4 flex flex-col items-center'>
+                <table className='w-full'>
+                    <thead className='bg-gradient-to-r from-primary to-secondary text-subtitle rounded-t-lg h-8'>
+                        <tr>
+                            {TableFields.map(field => (
+                                <th key={field.key}>{field.key}</th>
+                            ))}
+                        </tr>
+                    </thead>
+                        <tbody>
+                        {tableReadings.map(reading => (
+                            <tr key={reading._id}>
+                                {TableFields.map(field => (
+                                    <td key={field.key}>
+                                        {field.value === 'Date' ? formatDate(reading[field.value]) : (reading as any)[field.value]}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );
