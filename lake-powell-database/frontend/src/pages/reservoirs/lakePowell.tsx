@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../elements/navbar';
 import { Line } from 'react-chartjs-2';
 import Slider from '@mui/material/Slider';
+import downArrow from '../../assets/downArrow.svg';
+import upArrow from '../../assets/upArrow.svg';
+import neutralArrow from '../../assets/neutralArrow.svg';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -228,6 +231,17 @@ const LakePowell: React.FC = () => {
         return (new Date(dateString)).toLocaleDateString('en-US', options);
     };
 
+    // Display Up, Down, or Neutral arrow for reading component
+    const displayArrow = (percent: number): React.ReactNode => {
+        if (percent > 0) {
+            return <img src={upArrow} alt='Up Arrow' className='inline-block w-3 h-3 ml-2'/>;
+        } else if (percent < 0) {
+            return <img src={downArrow} alt='Down Arrow' className='inline-block w-3 h-3 ml-2'/>;
+        } else {
+            return <img src={neutralArrow} alt='Neutral Arrow' className='inline-block w-3 h-3 ml-2'/>;
+        }
+    };
+
     const handleDateChange = (event: Event, value: number | number[]) => {
         setSelectedDateRange(Array.isArray(value) ? value[0] : value);
     };
@@ -257,21 +271,25 @@ const LakePowell: React.FC = () => {
                             Lake Powell Elevation:
                             {currentReadings[0]?.['Elevation (feet)'] !== undefined ? 
                             ` ${currentReadings[0]?.['Elevation (feet)']} feet (${elevationChange}%)` : 'N/A'}
+                            {displayArrow(elevationChange)}
                         </label>
                         <label>
                             Inflow:
                             {currentReadings[0]?.['Inflow** (cfs)'] !== undefined ?
                             ` ${currentReadings[0]?.['Inflow** (cfs)']} cubic feet/second (${inflowChange}%)` : 'N/A'}
+                            {displayArrow(inflowChange)}
                         </label>
                         <label>
                             Outflow:
                             {currentReadings[0]?.['Total Release (cfs)'] !== undefined ?
                             ` ${currentReadings[0]?.['Total Release (cfs)']} cubic feet/second (${outflowChange}%)` : 'N/A'}
+                            {displayArrow(outflowChange)}
                         </label>
                         <label>
                             Storage:
                             {currentReadings[0]?.['Storage (af)'] !== undefined ?
                             ` ${currentReadings[0]?.['Storage (af)']} million acre feet (${storageChange}%)` : 'N/A'}
+                            {displayArrow(storageChange)}
                         </label>
                     </div>
                 ) : <div/> }
