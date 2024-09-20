@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../elements/navbar';
 import { Line } from 'react-chartjs-2';
 import Slider from '@mui/material/Slider';
-import downArrow from '../../assets/downArrow.svg';
-import upArrow from '../../assets/upArrow.svg';
-import neutralArrow from '../../assets/neutralArrow.svg';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -16,6 +12,11 @@ import {
     Legend,
 } from 'chart.js';
 import axios from 'axios';
+
+// Element Import
+import Navbar from '../elements/navbar';
+import Current from '../elements/current';
+import Weather from '../elements/weather';
   
 ChartJS.register(
     CategoryScale,
@@ -82,13 +83,6 @@ const LakePowell: React.FC = () => {
     const [selectedTimeTab, setSelectedTimeTab] = useState('current');
     const [selectedOptionsTab, setSelectedOptionsTab] = useState('options');
 
-    // Current Readings and Changes
-    const [currentReadings, setCurrentReadings] = useState<Reading[]>([]);
-    const [elevationChange, setElevationChange] = useState<number>(0);
-    const [inflowChange, setInflowChange] = useState<number>(0);
-    const [outflowChange, setOutflowChange] = useState<number>(0);
-    const [storageChange, setStorageChange] = useState<number>(0);
-
     // Readings and Chart Data
     const [readings, setReadings] = useState<Reading[]>([]);
     const [tableReadings, setTableReadings] = useState<Reading[]>([]);
@@ -130,18 +124,7 @@ const LakePowell: React.FC = () => {
                 }));
         };
 
-        const getCurrentData = () => {
-            setCurrentReadings(
-                readings.filter(reading => {
-                    const currDate = new Date(reading['Date']);
-                    const referenceDate = new Date(readings[0]['Date']);
-                    referenceDate.setDate(referenceDate.getDate() - 2);
-                    return currDate >= referenceDate;
-                }));
-        }
-
         getTableData(14);
-        getCurrentData();
 
     }, [readings]);
 
@@ -163,24 +146,6 @@ const LakePowell: React.FC = () => {
         updateData();
 
     }, [selectedField, selectedDateRange, readings]);
-
-    useEffect(() => {
-        const calculateChange = (field: keyof Reading): number => {
-            if (currentReadings[0] && currentReadings[1]) {
-                const currentValue = currentReadings[0][field] as unknown as number;
-                const previousValue = currentReadings[1][field] as unknown as number;
-                return parseFloat((100 * ((currentValue - previousValue) / currentValue)).toFixed(3));
-            } else {
-                return 0;
-            }
-        }
-
-        setElevationChange(calculateChange('Elevation (feet)' as keyof Reading));
-        setInflowChange(calculateChange('Inflow** (cfs)' as keyof Reading));
-        setOutflowChange(calculateChange('Total Release (cfs)' as keyof Reading));
-        setStorageChange(calculateChange('Storage (af)' as keyof Reading));
-
-    }, [currentReadings]);
 
     const setData = (field: keyof Reading): number[] => {
         return readings
@@ -220,28 +185,6 @@ const LakePowell: React.FC = () => {
         return new Date(dateString).toLocaleDateString('en-US', options);
     };
 
-    // Convert ISO date string to a readable format
-    const formatDateYear = (dateString: string): string => {
-        const options: Intl.DateTimeFormatOptions = {
-            month: '2-digit',
-            day: '2-digit',
-            year: 'numeric',
-            timeZone: 'UTC'
-        };
-        return (new Date(dateString)).toLocaleDateString('en-US', options);
-    };
-
-    // Display Up, Down, or Neutral arrow for reading component
-    const displayArrow = (percent: number): React.ReactNode => {
-        if (percent > 0) {
-            return <img src={upArrow} alt='Up Arrow' className='inline-block w-3 h-3 ml-2'/>;
-        } else if (percent < 0) {
-            return <img src={downArrow} alt='Down Arrow' className='inline-block w-3 h-3 ml-2'/>;
-        } else {
-            return <img src={neutralArrow} alt='Neutral Arrow' className='inline-block w-3 h-3 ml-2'/>;
-        }
-    };
-
     const handleDateChange = (event: Event, value: number | number[]) => {
         setSelectedDateRange(Array.isArray(value) ? value[0] : value);
     };
@@ -261,39 +204,8 @@ const LakePowell: React.FC = () => {
     return (
         <div>
             <Navbar />
-            <div className='bg-background text-dark_gray text-body rounded-lg shadow-xl p-2 m-4'>
-                {currentReadings[0] ? (
-                    <div className='flex flex-col'>
-                        <label className='text-subtitle'>
-                            Lake Powell Readings - {currentReadings[0]?.['Date'] ? formatDateYear(currentReadings[0]?.['Date']) : 'N/A'}
-                        </label>
-                        <label>
-                            Lake Powell Elevation:
-                            {currentReadings[0]?.['Elevation (feet)'] !== undefined ? 
-                            ` ${currentReadings[0]?.['Elevation (feet)']} feet (${elevationChange}%)` : 'N/A'}
-                            {displayArrow(elevationChange)}
-                        </label>
-                        <label>
-                            Inflow:
-                            {currentReadings[0]?.['Inflow** (cfs)'] !== undefined ?
-                            ` ${currentReadings[0]?.['Inflow** (cfs)']} cubic feet/second (${inflowChange}%)` : 'N/A'}
-                            {displayArrow(inflowChange)}
-                        </label>
-                        <label>
-                            Outflow:
-                            {currentReadings[0]?.['Total Release (cfs)'] !== undefined ?
-                            ` ${currentReadings[0]?.['Total Release (cfs)']} cubic feet/second (${outflowChange}%)` : 'N/A'}
-                            {displayArrow(outflowChange)}
-                        </label>
-                        <label>
-                            Storage:
-                            {currentReadings[0]?.['Storage (af)'] !== undefined ?
-                            ` ${currentReadings[0]?.['Storage (af)']} million acre feet (${storageChange}%)` : 'N/A'}
-                            {displayArrow(storageChange)}
-                        </label>
-                    </div>
-                ) : <div/> }
-            </div>
+            <Current />
+            <Weather />
             <div className='bg-background rounded-lg shadow-xl m-4 flex flex-col items-center'>
                 <div className='w-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-subtitle rounded-t-lg h-8'>
                     <label>Lake Powell {selectedField}</label>
@@ -392,7 +304,7 @@ const LakePowell: React.FC = () => {
                                     </div>
                                     <div className='flex items-center space-x-1'>
                                         <label>Median</label>
-                                        <input type='checkbox' id='max' className='rounded-md shadow-lg' />
+                                        <input type='checkbox' id='median' className='rounded-md shadow-lg' />
                                     </div>
                                 </div>
                                 <div className='flex flex-col'>
