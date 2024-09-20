@@ -27,6 +27,24 @@ router.get('/id/:id', async(req, res) => {
     }
 });
 
+router.get('/last-2-days', async(req, res) => {
+    try {
+        const db = getDB();
+        let collection = await db.collection('LP');
+
+        let query = {
+            'Date': {
+                $gt: new Date(new Date().setDate(new Date().getDate() - 2)),
+            }
+        };
+
+        let results = await collection.find(query).sort({ 'Date': -1}).toArray();
+        res.send(JSON.stringify(results, null, 2)).status(200);
+    } catch (error) {
+        res.status(500).send({ message: 'Error fetching record: ', error: e.message });
+    }
+});
+
 router.get('/last-14-days', async(req, res) => {
     try {
         const db = getDB();
