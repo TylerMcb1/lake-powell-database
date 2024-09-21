@@ -204,8 +204,10 @@ const LakePowell: React.FC = () => {
     return (
         <div>
             <Navbar />
-            <Current />
-            <Weather />
+            <div className='m-4 grid grid-cols-1 gap-4 lg:grid-cols-2 md:mx-2 md:px-2'>
+                <Current />
+                <Weather />
+            </div>
             <div className='bg-background rounded-lg shadow-xl m-4 flex flex-col items-center'>
                 <div className='w-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-subtitle rounded-t-lg h-8'>
                     <label>Lake Powell {selectedField}</label>

@@ -73,11 +73,11 @@ const Current: React.FC = () => {
     // Display Up, Down, or Neutral arrow for reading component
     const displayArrow = (percent: number): React.ReactNode => {
         if (percent > 0) {
-            return <img src={upArrow} alt='Up Arrow' className='inline-block w-3 h-3 ml-2'/>;
+            return <img src={upArrow} alt='Up Arrow' className='inline-block w-4 h-4 ml-2'/>;
         } else if (percent < 0) {
-            return <img src={downArrow} alt='Down Arrow' className='inline-block w-3 h-3 ml-2'/>;
+            return <img src={downArrow} alt='Down Arrow' className='inline-block w-4 h-4 ml-2'/>;
         } else {
-            return <img src={neutralArrow} alt='Neutral Arrow' className='inline-block w-3 h-3 ml-2'/>;
+            return <img src={neutralArrow} alt='Neutral Arrow' className='inline-block w-4 h-4 ml-2'/>;
         }
     };
 
@@ -93,10 +93,10 @@ const Current: React.FC = () => {
     };
 
     return (
-        <div className='bg-background text-dark_gray text-body rounded-lg shadow-xl p-2 m-4'>
+        <div className='bg-background text-dark_gray text-subtitle rounded-lg shadow-xl p-2'>
             {currentReadings[0] ? (
                 <div className='flex flex-col'>
-                    <label className='text-subtitle'>
+                    <label className='text-title'>
                         Lake Powell Readings - {currentReadings[0]?.['Date'] ? formatDateYear(currentReadings[0]?.['Date']) : 'N/A'}
                     </label>
                     <label>

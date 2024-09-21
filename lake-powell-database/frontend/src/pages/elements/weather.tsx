@@ -78,7 +78,7 @@ const Weather: React.FC = () => {
     }
 
     return (
-        <div className='bg-background text-dark_gray text-body rounded-lg shadow-xl p-2 m-4'>
+        <div className='bg-background text-dark_gray text-body rounded-lg shadow-xl p-2'>
             <div className='flex items-center justify-center space-x-2 mt-2 mb-4'>
                 <div className='flex items-center space-x-2'> 
                     {getIcon(currentConditions)}
