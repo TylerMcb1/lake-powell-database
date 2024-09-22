@@ -15,7 +15,6 @@ interface Reading {
 };
 
 const Current: React.FC = () => {
-    const [readings, setReadings] = useState<Reading[]>([]);
     const [currentReadings, setCurrentReadings] = useState<Reading[]>([]);
     const [elevationChange, setElevationChange] = useState<number>(0);
     const [inflowChange, setInflowChange] = useState<number>(0);
@@ -23,45 +22,44 @@ const Current: React.FC = () => {
     const [storageChange, setStorageChange] = useState<number>(0);
 
     useEffect(() => {
-        const fetchChartData = async () => {
+        const getCurrentData = async () => {
             try {
-                const response = await axios.get('http://localhost:5050/powell/last-14-days')
-                setReadings(response.data)
+                const response = await axios.get<Reading[]>('http://localhost:5050/powell/last-14-days');
+
+                // Type check response.data
+                if (Array.isArray(response.data)) {
+                    const readings = response.data;
+                    setCurrentReadings(
+                        readings.filter((reading) => {
+                            const currDate = new Date(reading['Date']);
+                            const referenceDate = new Date(readings[0]['Date']);
+                            referenceDate.setDate(referenceDate.getDate() - 2);
+                            return currDate >= referenceDate;
+                        })
+                    );
+                } else {
+                    throw new Error('Invalid response format')
+                }
             } catch (e) {
                 console.error('Unsucessful retrieval of database');
                 throw new Error(`Fetch Error: ${e}`)
             }
         };
 
-        fetchChartData();
-
+        getCurrentData();
+        
     }, []);
 
     useEffect(() => {
-        const getCurrentData = () => {
-            setCurrentReadings(
-                readings.filter(reading => {
-                    const currDate = new Date(reading['Date']);
-                    const referenceDate = new Date(readings[0]['Date']);
-                    referenceDate.setDate(referenceDate.getDate() - 2);
-                    return currDate >= referenceDate;
-                })
-            );
-        }
-
-        getCurrentData();
-    }, [readings]);
-
-    useEffect(() => {
         const calculateChange = (field: keyof Reading): number => {
-            if (currentReadings[0] && currentReadings[1]) {
+            if (currentReadings[0] !== undefined && currentReadings[1] !== undefined) {
                 const currentValue = currentReadings[0][field] as unknown as number;
                 const previousValue = currentReadings[1][field] as unknown as number;
                 return parseFloat((100 * ((currentValue - previousValue) / currentValue)).toFixed(3));
             } else {
                 return 0;
             }
-        }
+        };
 
         setElevationChange(calculateChange('Elevation (feet)' as keyof Reading));
         setInflowChange(calculateChange('Inflow** (cfs)' as keyof Reading));

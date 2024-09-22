@@ -33,6 +33,7 @@ type ChartData = {
     datasets: {
         label: string;
         backgroundColor: string;
+        fill: boolean;
         borderColor: string;
         data: (number | null)[];
     }[];
@@ -92,6 +93,7 @@ const LakePowell: React.FC = () => {
             {
                 label: '',
                 backgroundColor: '',
+                fill: false,
                 borderColor: '',
                 data: [],
             },
@@ -130,12 +132,14 @@ const LakePowell: React.FC = () => {
 
     useEffect(() => {
         const updateData = () => {
+            const currentYear = new Date().getFullYear();
             setChartData({
             labels: setDates(),
             datasets: [
                 {
-                    label: `Lake Powell ${selectedField}`,
+                    label: `${currentYear} ${selectedField}`,
                     backgroundColor: '#1B98DF80',
+                    fill: false,
                     borderColor: '#1B98DF',
                     data: setData(selectedField as keyof Reading),
                 },
@@ -208,13 +212,13 @@ const LakePowell: React.FC = () => {
                 <Current />
                 <Weather />
             </div>
-            <div className='bg-background rounded-lg shadow-xl m-4 flex flex-col items-center'>
+            <div className='bg-background rounded-lg shadow-xl m-4 flex flex-col items-center w-full h-full'>
                 <div className='w-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-subtitle rounded-t-lg h-8'>
                     <label>Lake Powell {selectedField}</label>
                 </div>
-                <div className='w-full max-w-4xl p-5 relative'>
-                    <div className='w-full h-full'>
-                        <Line data={chartData} options={{
+                <div className='w-full h-full flex items-center flex-col p-5 relative'>
+                    <Line data={chartData} 
+                        options={{
                             responsive: true,
                             maintainAspectRatio: true,
                             plugins: {
@@ -224,13 +228,12 @@ const LakePowell: React.FC = () => {
                                 },
                             },
                         }}
-                        className='w-full h-auto'
+                        className='w-full h-full'
                     />
-                    </div>
                 </div>
             </div>
-            <div className='flex w-full text-dark_gray text-body'>
-                <div className='bg-background rounded-lg shadow-xl ml-4 mr-2 flex flex-col items-center flex-grow'>
+            <div className='m-4 grid grid-cols-1 gap-4 lg:grid-cols-2 md:mx-2 md:px-2 text-dark_gray text-body'>
+                <div className='bg-background rounded-lg shadow-xl flex flex-col items-center'>
                     <div className='flex w-full'>
                         <button 
                             className={`w-1/2 rounded-t-lg py-1 border-dark_gray 
@@ -279,7 +282,7 @@ const LakePowell: React.FC = () => {
                         </div>
                     )}
                 </div>
-                <div className='bg-background rounded-lg shadow-xl ml-2 mr-4 flex flex-col items-center flex-grow'>
+                <div className='bg-background rounded-lg shadow-xl flex flex-col items-center flex-grow'>
                     <div className='flex w-full'>
                         <button 
                             className={`w-1/2 rounded-t-lg py-1 border-dark_gray 
@@ -355,9 +358,9 @@ const LakePowell: React.FC = () => {
                     )}
                 </div>
             </div>
-            <div className='bg-background rounded-lg shadow-xl m-4 flex flex-col items-center'>
+            <div className='bg-background rounded-lg shadow-xl m-4 flex flex-col items-center text-dark_gray'>
                 <table className='w-full'>
-                    <thead className='bg-gradient-to-r from-primary to-secondary text-subtitle h-8'>
+                    <thead className='bg-gradient-to-r from-primary to-secondary text-black text-subtitle h-8'>
                         <tr>
                             {TableFields.map((field, index) => (
                                 <th 

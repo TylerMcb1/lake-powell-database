@@ -1,8 +1,15 @@
 import express from 'express';
+import axios from 'axios';
 import { getDB } from './connection.js'
 import { ObjectId } from 'mongodb';
 
 const router = express.Router();
+
+// Weather endpoint variables
+let cachedWeather = null;
+let lastFetchedTime = 0;
+const FETCHINTERVAL = 60000;
+const APITIMEOUT = 5000;
 
 router.get('/', async (req, res) => {
     try {
@@ -59,6 +66,41 @@ router.get('/last-365-days', async(req, res) => {
         res.send(JSON.stringify(results, null, 2)).status(200);
     } catch (error) {
         res.status(500).send({ message: 'Error fetching record: ', error: error.message });
+    }
+});
+
+router.get('/weather', async(req, res) => {
+    const currentTime = Date.now();
+    
+    // Return cached Weather data if time inteval > 1 minutes
+    if (cachedWeather !== null && (currentTime - lastFetchedTime < FETCHINTERVAL)) {
+        return res.status(200).send(cachedWeather);
+    }
+
+    // Obtain updated weather data otherwise
+    try {
+        const response = await axios.get('https://api.weather.gov/gridpoints/FGZ/37,111/forecast/hourly?units=us', {
+            headers: { 'User-Agent': 'ColoradoRiverData/1.0 (ColoradoRiverData@gmail.com)' },
+            timeout: APITIMEOUT,
+        });
+
+        // Build current weather object and update cached timestamp
+        cachedWeather = await response.data.properties.periods;
+        lastFetchedTime = currentTime;
+
+        // Filter weather data for 
+
+        if (cachedWeather !== undefined) {
+            res.send(JSON.stringify(cachedWeather, null, 2)).status(200);
+        } else {
+            throw new Error('Unable to locate weather gridpoint properties');
+        }
+    } catch (error) {
+        // Timeout error
+        if (error.code === 'ECONNABORTED') {
+            return res.status(504).send({ message: 'Error: API call timed out' });
+        }
+        res.status(500).send({ message: 'Error fetching weather API: ', error: error.message })
     }
 });
 
