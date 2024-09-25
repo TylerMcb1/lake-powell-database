@@ -97,37 +97,35 @@ const LakeCurrent: React.FC<LakeCurrentObject> = ({ fetchString, name }) => {
 
     return (
         <div className='bg-background text-dark_gray text-subtitle rounded-lg shadow-xl p-2'>
-            {currentReadings[0] ? (
-                <div className='flex flex-col'>
-                    <label className='text-title'>
-                        {name} Readings - {currentReadings[0]?.['Date'] ? formatDateYear(currentReadings[0]?.['Date']) : 'N/A'}
-                    </label>
-                    <label>
-                       {name} Elevation:
-                        {currentReadings[0]?.['Elevation (feet)'] !== undefined ? 
-                        ` ${currentReadings[0]?.['Elevation (feet)']} feet (${elevationChange}%)` : 'N/A'}
-                        {displayArrow(elevationChange)}
-                    </label>
-                    <label>
-                        Inflow:
-                        {currentReadings[0]?.['Inflow** (cfs)'] !== undefined ?
-                        ` ${currentReadings[0]?.['Inflow** (cfs)']} cubic feet/second (${inflowChange}%)` : 'N/A'}
-                        {displayArrow(inflowChange)}
-                    </label>
-                    <label>
-                        Outflow:
-                        {currentReadings[0]?.['Total Release (cfs)'] !== undefined ?
-                        ` ${currentReadings[0]?.['Total Release (cfs)']} cubic feet/second (${outflowChange}%)` : 'N/A'}
-                        {displayArrow(outflowChange)}
-                    </label>
-                    <label>
-                        Storage:
-                        {currentReadings[0]?.['Storage (af)'] !== undefined ?
-                        ` ${currentReadings[0]?.['Storage (af)']} million acre feet (${storageChange}%)` : 'N/A'}
-                        {displayArrow(storageChange)}
-                    </label>
-                </div>
-            ) : <div/> }
+            <div className='flex flex-col'>
+                <label className='text-title'>
+                    {name} Readings - {currentReadings[0]?.['Date'] ? formatDateYear(currentReadings[0]?.['Date']) : 'N/A'}
+                </label>
+                <label>
+                    {name} Elevation:
+                    {currentReadings[0]?.['Elevation (feet)'] !== undefined ? 
+                    ` ${currentReadings[0]?.['Elevation (feet)']} feet (${elevationChange}%)` : 'N/A'}
+                    {displayArrow(elevationChange)}
+                </label>
+                <label>
+                    Inflow:
+                    {currentReadings[0]?.['Inflow** (cfs)'] !== undefined ?
+                    ` ${currentReadings[0]?.['Inflow** (cfs)']} cubic feet/second (${inflowChange}%)` : 'N/A'}
+                    {displayArrow(inflowChange)}
+                </label>
+                <label>
+                    Outflow:
+                    {currentReadings[0]?.['Total Release (cfs)'] !== undefined ?
+                    ` ${currentReadings[0]?.['Total Release (cfs)']} cubic feet/second (${outflowChange}%)` : 'N/A'}
+                    {displayArrow(outflowChange)}
+                </label>
+                <label>
+                    Storage:
+                    {currentReadings[0]?.['Storage (af)'] !== undefined ?
+                    ` ${currentReadings[0]?.['Storage (af)']} million acre feet (${storageChange}%)` : 'N/A'}
+                    {displayArrow(storageChange)}
+                </label>
+            </div>
         </div>
     )
 };

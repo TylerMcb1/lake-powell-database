@@ -1,7 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import powellRecords from './powell.js';
 import { openConnection, closeConnection } from './connection.js';
+
+// Import records
+import powellRecords from './reservoirs/powell.js';
+import upperGreenRecords from './basins/upperGreen.js';
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -35,6 +38,7 @@ const shutDown = async () => {
 
         // Mount the powell records router on the '/' path
         app.use('/powell/', powellRecords);
+        app.use('/upper-green/', upperGreenRecords);
 
         // Error handling middleware
         app.use((err, req, res, next) => {
@@ -53,7 +57,7 @@ const shutDown = async () => {
         });
 
         // Listen for keyboard interruption signal
-        process.on('SIGINT', shutDown); // CNTL + C
+        process.on('SIGINT', shutDown); // CTRL + C
     } catch (e) {
         console.error("Failed to connect to the database. Server not started.");
         process.exit(1);

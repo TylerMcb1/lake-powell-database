@@ -1,6 +1,6 @@
 import express from 'express';
 import axios from 'axios';
-import { getDB } from './connection.js'
+import { getDB } from '../connection.js'
 import { ObjectId } from 'mongodb';
 
 const router = express.Router();
