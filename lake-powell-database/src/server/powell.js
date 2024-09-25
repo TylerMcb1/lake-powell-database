@@ -78,12 +78,37 @@ router.get('/last-365-days', async(req, res) => {
     }
 });
 
+router.get('/historical', async(req, res) => {
+    try {
+        const { startDate, endDate } = req.body;
+
+        if (!startDate || !endDate) {
+            throw new Error('Both startDate and endDate must be provided');
+        }
+
+        const db = getDB();
+        let collection = await db.collection('LP');
+
+        let query = {
+            'Date': {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            },
+        };
+
+        let results = await collection.find(query).sort({ 'Date': -1}).toArray();
+        res.send(JSON.stringify(results, null, 2)).status(200);
+    } catch (error) {
+        res.status(500).send({ message: 'Error fetching record: ', error: error.message });
+    }
+});
+
 router.get('/weather', async(req, res) => {
     const currentTime = Date.now();
     
     // Return cached Weather data if time inteval > 1 minutes
     if (cachedWeather !== null && (currentTime - lastFetchedWeather < FETCHINTERVAL)) {
-        return res.status(200).send(cachedWeather);
+        return res.send(JSON.stringify(cachedWeather, null, 2)).status(200);
     }
 
     // Obtain updated weather data otherwise
@@ -116,7 +141,7 @@ router.get('/sunrise-sunset', async(req, res) => {
 
     // Return cached Sunrise and Sunset data if time inteval > 1 minutes
     if (cachedSunriseSunset !== null && (currentTime - lastFetchedSS < FETCHINTERVAL)) {
-        return res.status(200).send(cachedSunriseSunset);
+        return res.send(JSON.stringify(cachedSunriseSunset, null, 2)).status(200);
     }
 
     // Obtain updated sunrise sunset data otherwise
@@ -148,7 +173,7 @@ router.get('/alerts', async(req, res) => {
 
     // Return cached Sunrise and Sunset data if time inteval > 1 minutes
     if (cachedAlerts !== null && (currentTime - lastFetchedAlerts < FETCHINTERVAL)) {
-        return res.status(200).send(cachedAlerts);
+        return res.send(JSON.stringify(cachedAlerts, null, 2)).status(200);
     }
 
     // Obtain updated sunrise sunset data otherwise

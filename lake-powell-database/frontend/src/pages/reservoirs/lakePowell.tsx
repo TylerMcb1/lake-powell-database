@@ -18,6 +18,8 @@ import Navbar from '../elements/navbar';
 import Current from '../elements/current';
 import Weather from '../elements/weather';
 import Table from '../elements/table';
+
+const TABLEFETCHSTRING = 'http://localhost:5050/powell/last-14-days';
   
 ChartJS.register(
     CategoryScale,
@@ -36,8 +38,9 @@ type ChartData = {
         backgroundColor: string;
         fill: boolean;
         borderColor: string;
-        data: (number | null)[];
+        data: number[];
     }[];
+    options: object;
 };
 
 interface Reading {
@@ -72,24 +75,34 @@ const LakePowell: React.FC = () => {
     const [selectedDateRange, setSelectedDateRange] = useState<number>(14);
     const [selectedOverlay, setSelectedOverlay] = useState<number>(0);
     const [selectedExport, setSelectedExport] = useState<string>('PDF');
+    const [historicalStartDate, setHistoricalStartDate] = useState<string>('');
+    const [historicalEndDate, setHistoricalEndDate] = useState<string>('');
+    const [showMean, setShowMean] = useState<boolean>(false);
+    const [mean, setMean] = useState<number>(0);
+    const [showMedian, setShowMedian] = useState<boolean>(false);
+    const [median, setMedian] = useState<number>(0);
 
     // Selected Time and Options Tabs
-    const [selectedTimeTab, setSelectedTimeTab] = useState('current');
-    const [selectedOptionsTab, setSelectedOptionsTab] = useState('options');
+    const [selectedTimeTab, setSelectedTimeTab] = useState<string>('current');
+    const [selectedOptionsTab, setSelectedOptionsTab] = useState<string>('options');
+
+    // Toggle historical/current graph display
+    const [displayCurrent, setDisplayCurrent] = useState<boolean>(true);
 
     // Readings and Chart Data
     const [readings, setReadings] = useState<Reading[]>([]);
     const [chartData, setChartData] = useState<ChartData>({
-        labels: [],
+        labels: [] as string[],
         datasets: [
             {
                 label: '',
                 backgroundColor: '',
                 fill: false,
                 borderColor: '',
-                data: [],
+                data: [] as number[],
             },
         ],
+        options: {},
     });
 
     useEffect(() => {
@@ -103,30 +116,53 @@ const LakePowell: React.FC = () => {
             }
         };
 
-        fetchChartData();
+        if (displayCurrent) {
+            fetchChartData();
+        }
 
-    }, []);
+    }, [displayCurrent]);
 
     useEffect(() => {
         const updateData = () => {
             const currentYear = new Date().getFullYear();
             setChartData({
-            labels: setDates(),
-            datasets: [
-                {
-                    label: `${currentYear} ${selectedField}`,
-                    backgroundColor: '#1B98DF80',
-                    fill: false,
-                    borderColor: '#1B98DF',
-                    data: setData(selectedField as keyof Reading),
-                },
-            ],
+                labels: setDates(),
+                datasets: [
+                    {
+                        label: `${displayCurrent ? currentYear : 'Historical'} ${selectedField}`,
+                        backgroundColor: '#1B98DF80',
+                        fill: false,
+                        borderColor: '#1B98DF',
+                        data: setData(selectedField as keyof Reading),
+                    },
+                ],
+                options: {}
             });
         };
 
         updateData();
 
     }, [selectedField, selectedDateRange, readings]);
+
+    const handleHistoricalSubmit = () => {
+        setDisplayCurrent(false);
+        fetchHistorical();
+    };
+
+    const fetchHistorical = async () => {
+        try {
+            const response = await axios.get('http://localhost:5050/powell/historical', {
+                params: {
+                    startDate: historicalStartDate,
+                    endDate: historicalEndDate
+                }
+            });
+            setReadings(response.data);
+        } catch (e) {
+            console.error('Unsucessful retrieval of database');
+            throw new Error(`Fetch Error: ${e}`)
+        }
+    };
 
     const setData = (field: keyof Reading): number[] => {
         return readings
@@ -156,6 +192,14 @@ const LakePowell: React.FC = () => {
             .reverse();
     };
 
+    const handleMeanChange = () => {
+        setShowMean(!showMean);
+    };
+
+    const handleMedianChange = () => {
+        setShowMedian(!showMedian);
+    };
+
     const handleDateChange = (event: Event, value: number | number[]) => {
         setSelectedDateRange(Array.isArray(value) ? value[0] : value);
     };
@@ -170,6 +214,14 @@ const LakePowell: React.FC = () => {
 
     const handleExportChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedExport(event.target.value);
+    };
+
+    const handleHistoricalStartChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setHistoricalStartDate(event.target.value);
+    };
+
+    const handleHistoricalEndChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setHistoricalEndDate(event.target.value);
     };
 
     return (
@@ -233,19 +285,31 @@ const LakePowell: React.FC = () => {
                         </div>
                     ) : (
                         <div className='w-full'>
-                            <div className='w-full flex justify-center space-x-4 p-4'>
-                                <div className='flex flex-col'>
-                                    <label htmlFor='start-date'>Start Date</label>
-                                    <input type='date' id='start-date' className='rounded-md border shadow-lg px-1' />
+                            <form id='historical' onSubmit={handleHistoricalSubmit}>
+                                <div className='w-full flex justify-center space-x-4 p-4'>
+                                    <div className='flex flex-col'>
+                                        <label htmlFor='start-date'>Start Date</label>
+                                        <input 
+                                            type='date' 
+                                            id='start-date' 
+                                            className='rounded-md border shadow-lg px-1'
+                                            onChange={handleHistoricalStartChange}
+                                        />
+                                    </div>
+                                    <div className='flex flex-col'>
+                                        <label htmlFor='end-date'>End Date</label>
+                                        <input 
+                                            type='date' 
+                                            id='end-date' 
+                                            className='rounded-md border shadow-lg px-1' 
+                                            onChange={handleHistoricalEndChange}
+                                        />
+                                    </div>
                                 </div>
-                                <div className='flex flex-col'>
-                                    <label htmlFor='end-date'>End Date</label>
-                                    <input type='date' id='end-date' className='rounded-md border shadow-lg px-1' />
+                                <div className='w-full flex justify-end'>
+                                    <button type='submit' className='bg-primary text-black rounded-lg shadow-lg px-4 mb-2 mr-2'>Go</button>
                                 </div>
-                            </div>
-                            <div className='w-full flex justify-end'>
-                                <button className='bg-primary text-black rounded-lg shadow-lg px-4 mb-2 mr-2'>Go</button>
-                            </div>
+                            </form>
                         </div>
                     )}
                 </div>
@@ -271,12 +335,22 @@ const LakePowell: React.FC = () => {
                             <div className='flex w-full justify-center p-4'>
                                 <div className='flex flex-col'>
                                     <div className='flex items-center space-x-1'>
-                                        <label>Max</label>
-                                        <input type='checkbox' id='max' className='rounded-md shadow-lg' />
+                                        <label>Mean</label>
+                                        <input 
+                                            type='checkbox' 
+                                            id='mean' 
+                                            className='rounded-md shadow-lg'
+                                            onChange={handleMeanChange}
+                                        />
                                     </div>
                                     <div className='flex items-center space-x-1'>
                                         <label>Median</label>
-                                        <input type='checkbox' id='median' className='rounded-md shadow-lg' />
+                                        <input 
+                                            type='checkbox' 
+                                            id='median' 
+                                            className='rounded-md shadow-lg'
+                                            onChange={handleMedianChange}
+                                        />
                                     </div>
                                 </div>
                                 <div className='flex flex-col'>
@@ -325,7 +399,10 @@ const LakePowell: React.FC = () => {
                     )}
                 </div>
             </div>
-            <Table />
+            <Table 
+                fetchString={TABLEFETCHSTRING}
+                type='reservoir'
+            />
         </div>
     );
 };

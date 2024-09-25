@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-interface Reading {
+interface LakeReading {
     _id: string;
     Date: string;
     "Elevation (feet)": number;
@@ -9,14 +9,31 @@ interface Reading {
     "Evaporation (af)": number;
     "Inflow** (cfs)": number;
     "Total Release (cfs)": number;
-}
+};
+
+interface BasinReading {
+    _id: string;
+    Date: string;
+    "Station Id": number;
+    "Snow Water Equivalent (in) Start of Day Values": number;
+    "Snow Depth (in) Start of Day Values": number;
+    "Precipitation Accumulation (in) Start of Day Values": number;
+    "Precipitation Increment (in)": number;
+    "Snow Water Equivalent % of Median (1991-2020)": number;
+    "Precipitation Accumulation % of Median (1991-2020)": number;
+};
 
 interface TableField {
     key: string;
     value: string;
-}
+};
 
-const TableFields: TableField[] = [
+interface TableObject {
+    fetchString: string;
+    type: string;
+};
+
+const LakeFields: TableField[] = [
     {key: 'Date', value: 'Date'},
     {key: 'Water Level', value: 'Elevation (feet)'},
     {key: 'Storage', value: 'Storage (af)'},
@@ -24,16 +41,24 @@ const TableFields: TableField[] = [
     {key: 'Outflow', value: 'Total Release (cfs)'}
 ];
 
-const Table: React.FC = () => {
+const BasinFields: TableField[] = [
+    {key: 'Date', value: 'Date'},
+    {key: 'Snow Water Equivalent', value: 'Snow Water Equivalent (in) Start of Day Values'},
+    {key: 'Snow Depth', value: 'Snow Depth (in) Start of Day Values'},
+    {key: 'Annual Precipitation', value: 'Precipitation Accumulation (in) Start of Day Values'},
+    {key: 'Daily Precipitation', value: 'Precipitation Increment (in)'}
+];
+
+const Table: React.FC<TableObject> = ({ fetchString, type }) => {
     // Readings and Chart Data
-    const [readings, setReadings] = useState<Reading[]>([]);
-    const [tableReadings, setTableReadings] = useState<Reading[]>([]);
+    const [readings, setReadings] = useState<(LakeReading | BasinReading)[]>([]);
+    const [tableReadings, setTableReadings] = useState<(LakeReading | BasinReading)[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:5050/powell/last-14-days')
-                setReadings(response.data)
+                const response = await axios.get(fetchString);
+                setReadings(response.data);
             } catch (e) {
                 console.error('Unsucessful retrieval of database');
                 throw new Error(`Fetch Error: ${e}`)
@@ -59,25 +84,6 @@ const Table: React.FC = () => {
 
     }, [readings]);
 
-    useEffect(() => {
-        const fetchChartData = async () => {
-            try {
-                const response = await fetch('http://localhost:5050/powell/last-14-days')
-                if (!response.ok) {
-                    console.error('Unsucessful retrieval of database');
-                }
-                const data: Reading[] = await response.json();
-                setReadings(data)
-                console.log(data)
-            } catch (e) {
-                console.error('Unsucessful retrieval of database');
-                throw new Error(`Fetch Error: ${e}`)
-            }
-        };
-
-        fetchChartData();
-    }, []);
-
     // Convert ISO date string to a readable format
     const formatDate = (dateString: string): string => {
         const options: Intl.DateTimeFormatOptions = {
@@ -93,29 +99,53 @@ const Table: React.FC = () => {
             <table className='w-full'>
                 <thead className='bg-gradient-to-r from-primary to-secondary text-black text-subtitle h-8'>
                     <tr>
-                        {TableFields.map((field, index) => (
-                            <th 
-                                key={field.key}
-                                className={`${index === 0 ? 'rounded-tl-lg' : index === TableFields.length - 1 ? 'rounded-tr-lg' : ''}`}
-                            >
-                                {field.key}
-                            </th>
-                        ))}
+                        {(type === 'reservoir') ? (
+                            LakeFields.map((field, index) => (
+                                <th 
+                                    key={field.key}
+                                    className={`${index === 0 ? 'rounded-tl-lg' : index === LakeFields.length - 1 ? 'rounded-tr-lg' : ''}`}
+                                >
+                                    {field.key}
+                                </th>
+                            ))
+                        ) : (
+                            BasinFields.map((field, index) => (
+                                <th 
+                                    key={field.key}
+                                    className={`${index === 0 ? 'rounded-tl-lg' : index === BasinFields.length - 1 ? 'rounded-tr-lg' : ''}`}
+                                >
+                                    {field.key}
+                                </th>
+                            ))
+                        )}
                     </tr>
                 </thead>
                 <tbody>
                     {tableReadings.map((reading, rowIndex) => (
                         <tr key={rowIndex}>
-                            {TableFields.map((field, colIndex) => (
-                                <td 
-                                    key={field.key}
-                                    className={`p-1 ${rowIndex % 2 === 1 ? 'bg-gray ' : ' '} 
-                                    ${(rowIndex === tableReadings.length - 1 && colIndex === 0) ? 'rounded-bl-lg ' : ' '}
-                                    ${(rowIndex === tableReadings.length - 1 && colIndex === TableFields.length - 1) ? 'rounded-br-lg' : ''}`}
-                                >
-                                    {field.value === 'Date' ? formatDate(reading[field.value]) : (reading as any)[field.value]}
-                                </td>
-                            ))}
+                            {(type === 'reservoir') ? (
+                                LakeFields.map((field, colIndex) => (
+                                    <td 
+                                        key={field.key}
+                                        className={`p-1 ${rowIndex % 2 === 1 ? 'bg-gray ' : ' '} 
+                                        ${(rowIndex === tableReadings.length - 1 && colIndex === 0) ? 'rounded-bl-lg ' : ' '}
+                                        ${(rowIndex === tableReadings.length - 1 && colIndex === LakeFields.length - 1) ? 'rounded-br-lg' : ''}`}
+                                    >
+                                        {field.value === 'Date' ? formatDate(reading[field.value]) : (reading as any)[field.value]}
+                                    </td>
+                                ))
+                            ) : (
+                                BasinFields.map((field, colIndex) => (
+                                    <td 
+                                        key={field.key}
+                                        className={`p-1 ${rowIndex % 2 === 1 ? 'bg-gray ' : ' '} 
+                                        ${(rowIndex === tableReadings.length - 1 && colIndex === 0) ? 'rounded-bl-lg ' : ' '}
+                                        ${(rowIndex === tableReadings.length - 1 && colIndex === BasinFields.length - 1) ? 'rounded-br-lg' : ''}`}
+                                    >
+                                        {field.value === 'Date' ? formatDate(reading[field.value]) : (reading as any)[field.value]}
+                                    </td>
+                                ))
+                            )}
                         </tr>
                     ))}
                 </tbody>

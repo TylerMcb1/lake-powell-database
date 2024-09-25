@@ -1,7 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import axios from 'axios';
 
-// Import weather icons
+// Import day icons
 import sunny from '../../assets/weather/sunny.svg';
 import mostlyCloudy from '../../assets/weather/mostlyCloudy.svg';
 import partlyCloudy from '../../assets/weather/partlyCloudy.svg';
@@ -14,6 +14,7 @@ import sleet from '../../assets/weather/sleet.svg';
 import hail from '../../assets/weather/hail.svg';
 import snow from '../../assets/weather/snow.svg';
 
+// Import night icons
 import night from '../../assets/weather/night.svg';
 import mostlyCloudyNight from '../../assets/weather/mostlyCloudyNight.svg';
 import partlyCloudyNight from '../../assets/weather/partlyCloudyNight.svg';
