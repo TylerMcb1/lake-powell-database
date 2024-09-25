@@ -18,21 +18,6 @@ import night from '../../assets/weather/night.svg';
 import mostlyCloudyNight from '../../assets/weather/mostlyCloudyNight.svg';
 import partlyCloudyNight from '../../assets/weather/partlyCloudyNight.svg';
 
-
-
-{/* <img src={sunny} alt='Sunny' className='inline-block w-10 h-10' />
-    <img src={cloudy} alt='Cloudy' className='inline-block w-10 h-10' />
-    <img src={night} alt='Night' className='inline-block w-10 h-10' />
-    <img src={windy} alt='Windy' className='inline-block w-10 h-10' />
-    <img src={snow} alt='Snowy' className='inline-block w-10 h-10' /> */}
-
-    // https://api.weather.gov/stations/KAGU1/observations/latest?units=us -- lake powell current observations
-    // https://api.weather.gov/gridpoints/FGZ/37,111/forecast/hourly?units=us -- forecast
-    // https://api.weather.gov/alerts/active?point=37,-111 -- alerts
-    
-//     const stationId = 'KAGU1';
-
-
 type Alert = {
     name: string;
     link: string;
@@ -142,6 +127,8 @@ const Weather: React.FC = () => {
         };
 
         const fetchAlerts = async () => {
+            const response = await axios.get('http://localhost:5050/powell/alerts');
+            setWeatherAlerts(response.data);
         };
 
         const fetchSunriseSunset = async () => {
@@ -153,6 +140,7 @@ const Weather: React.FC = () => {
         };
 
         fetchWeather();
+        fetchAlerts();
         fetchSunriseSunset();
 
     }, []);

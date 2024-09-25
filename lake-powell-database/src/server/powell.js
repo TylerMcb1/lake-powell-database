@@ -16,6 +16,10 @@ let lastFetchedWeather = 0;
 let cachedSunriseSunset = null;
 let lastFetchedSS = 0;
 
+// Alerts variables
+let cachedAlerts = null;
+let lastFetchedAlerts = 0;
+
 router.get('/', async (req, res) => {
     try {
         const db = getDB();
@@ -128,14 +132,46 @@ router.get('/sunrise-sunset', async(req, res) => {
         if (cachedSunriseSunset !== undefined) {
             res.send(JSON.stringify(cachedSunriseSunset, null, 2)).status(200);
         } else {
-            throw new Error('Unable to locate weather gridpoint properties');
+            throw new Error('Unable to locate sunrise/sunset gridpoint');
         }
     } catch (error) {
         // Timeout error
         if (error.code === 'ECONNABORTED') {
             return res.status(504).send({ message: 'Error: API call timed out' });
         }
-        res.status(500).send({ message: 'Error fetching weather API: ', error: error.message })
+        res.status(500).send({ message: 'Error fetching sunrise/sunset API: ', error: error.message })
+    }
+});
+
+router.get('/alerts', async(req, res) => {
+    const currentTime = Date.now();
+
+    // Return cached Sunrise and Sunset data if time inteval > 1 minutes
+    if (cachedAlerts !== null && (currentTime - lastFetchedAlerts < FETCHINTERVAL)) {
+        return res.status(200).send(cachedAlerts);
+    }
+
+    // Obtain updated sunrise sunset data otherwise
+    try {
+        const response = await axios.get('https://api.weather.gov/alerts/active?point=37,-111', {
+            headers: { 'User-Agent': 'ColoradoRiverData/1.0 (ColoradoRiverData@gmail.com)' },
+            timeout: APITIMEOUT,
+        });
+
+        // Build current alerts object and update cached timestamp
+        cachedAlerts = await response.data.features;
+
+        if (cachedAlerts !== undefined) {
+            res.send(JSON.stringify(cachedAlerts, null, 2)).status(200);
+        } else {
+            throw new Error('Unable to locate alerts gridpoint properties');
+        }
+    } catch (error) {
+        // Timeout error
+        if (error.code === 'ECONNABORTED') {
+            return res.status(504).send({ message: 'Error: API call timed out' });
+        }
+        res.status(500).send({ message: 'Error fetching alerts API: ', error: error.message })
     }
 });
 
