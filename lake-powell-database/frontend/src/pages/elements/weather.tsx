@@ -19,27 +19,33 @@ import night from '../../assets/weather/night.svg';
 import mostlyCloudyNight from '../../assets/weather/mostlyCloudyNight.svg';
 import partlyCloudyNight from '../../assets/weather/partlyCloudyNight.svg';
 
-type Alert = {
+interface WeatherObject {
+    fetchWeatherString: string;
+    fetchSSString: string;
+    fetchAlertsString: string;
+};
+
+interface Alert {
     name: string;
     link: string;
 };
 
-type ForecastCondition = {
-    isDaytime: boolean,
-    startTime: string,
-    shortForecast: string,
-    temperature: number,
+interface ForecastCondition {
+    isDaytime: boolean;
+    startTime: string;
+    shortForecast: string;
+    temperature: number;
 };
 
-type CurrentCondition = {
-    isDaytime: boolean,
-    startTime: string,
-    shortForecast: string, 
-    temperature: number,
-    windSpeed: string,
-    windDirection: string,
-    humidity: number,
-    precipitation: number,
+interface CurrentCondition {
+    isDaytime: boolean;
+    startTime: string;
+    shortForecast: string; 
+    temperature: number;
+    windSpeed: string;
+    windDirection: string;
+    humidity: number;
+    precipitation: number;
 };
 
 const DayConditionIcons: Record<string, string> = {
@@ -71,7 +77,7 @@ const NightConditionIcons: Record<string, string> = {
     'windy': windy,
 };
 
-const Weather: React.FC = () => {
+const Weather: React.FC<WeatherObject> = ({ fetchWeatherString, fetchSSString, fetchAlertsString }) => {
     // Current Conditions
     const [currentWeather, setCurrentWeather] = useState<CurrentCondition>({
         isDaytime: true,
@@ -95,7 +101,7 @@ const Weather: React.FC = () => {
 
     useEffect(() => {
         const fetchWeather = async () => {
-            const response = await axios.get('http://localhost:5050/powell/weather');
+            const response = await axios.get(fetchWeatherString);
             const weatherData = await response.data;
 
             const fetchedCurrentWeather: CurrentCondition = {
@@ -128,12 +134,12 @@ const Weather: React.FC = () => {
         };
 
         const fetchAlerts = async () => {
-            const response = await axios.get('http://localhost:5050/powell/alerts');
+            const response = await axios.get(fetchAlertsString);
             setWeatherAlerts(response.data);
         };
 
         const fetchSunriseSunset = async () => {
-            const response = await axios.get('http://localhost:5050/powell/sunrise-sunset');
+            const response = await axios.get(fetchSSString);
             const sunriseSunsetData = await response.data;
 
             setCurrentSunrise(adjustForTimezone(sunriseSunsetData.sunrise, timeOffset));

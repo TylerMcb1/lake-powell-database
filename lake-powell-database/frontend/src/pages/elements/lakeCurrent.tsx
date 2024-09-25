@@ -4,7 +4,7 @@ import upArrow from '../../assets/arrows/upArrow.svg';
 import neutralArrow from '../../assets/arrows/neutralArrow.svg';
 import axios from 'axios';
 
-interface Reading {
+interface LakeReading {
     _id: string;
     Date: string;
     "Elevation (feet)": number;
@@ -14,8 +14,13 @@ interface Reading {
     "Total Release (cfs)": number;
 };
 
-const Current: React.FC = () => {
-    const [currentReadings, setCurrentReadings] = useState<Reading[]>([]);
+interface LakeCurrentObject {
+    fetchString: string;
+    name: string;
+};
+
+const LakeCurrent: React.FC<LakeCurrentObject> = ({ fetchString, name }) => {
+    const [currentReadings, setCurrentReadings] = useState<LakeReading[]>([]);
     const [elevationChange, setElevationChange] = useState<number>(0);
     const [inflowChange, setInflowChange] = useState<number>(0);
     const [outflowChange, setOutflowChange] = useState<number>(0);
@@ -24,7 +29,7 @@ const Current: React.FC = () => {
     useEffect(() => {
         const getCurrentData = async () => {
             try {
-                const response = await axios.get<Reading[]>('http://localhost:5050/powell/last-14-days');
+                const response = await axios.get(fetchString);
 
                 // Type check response.data
                 if (Array.isArray(response.data)) {
@@ -51,7 +56,7 @@ const Current: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        const calculateChange = (field: keyof Reading): number => {
+        const calculateChange = (field: keyof LakeReading): number => {
             if (currentReadings[0] !== undefined && currentReadings[1] !== undefined) {
                 const currentValue = currentReadings[0][field] as unknown as number;
                 const previousValue = currentReadings[1][field] as unknown as number;
@@ -60,11 +65,11 @@ const Current: React.FC = () => {
                 return 0;
             }
         };
-
-        setElevationChange(calculateChange('Elevation (feet)' as keyof Reading));
-        setInflowChange(calculateChange('Inflow** (cfs)' as keyof Reading));
-        setOutflowChange(calculateChange('Total Release (cfs)' as keyof Reading));
-        setStorageChange(calculateChange('Storage (af)' as keyof Reading));
+        
+        setElevationChange(calculateChange('Elevation (feet)' as keyof LakeReading));
+        setInflowChange(calculateChange('Inflow** (cfs)' as keyof LakeReading));
+        setOutflowChange(calculateChange('Total Release (cfs)' as keyof LakeReading));
+        setStorageChange(calculateChange('Storage (af)' as keyof LakeReading));
 
     }, [currentReadings]);
 
@@ -95,10 +100,10 @@ const Current: React.FC = () => {
             {currentReadings[0] ? (
                 <div className='flex flex-col'>
                     <label className='text-title'>
-                        Lake Powell Readings - {currentReadings[0]?.['Date'] ? formatDateYear(currentReadings[0]?.['Date']) : 'N/A'}
+                        {name} Readings - {currentReadings[0]?.['Date'] ? formatDateYear(currentReadings[0]?.['Date']) : 'N/A'}
                     </label>
                     <label>
-                        Lake Powell Elevation:
+                       {name} Elevation:
                         {currentReadings[0]?.['Elevation (feet)'] !== undefined ? 
                         ` ${currentReadings[0]?.['Elevation (feet)']} feet (${elevationChange}%)` : 'N/A'}
                         {displayArrow(elevationChange)}
@@ -127,4 +132,4 @@ const Current: React.FC = () => {
     )
 };
 
-export default Current;
+export default LakeCurrent;

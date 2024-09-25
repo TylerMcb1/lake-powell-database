@@ -15,11 +15,15 @@ import axios from 'axios';
 
 // Element Import
 import Navbar from '../elements/navbar';
-import Current from '../elements/current';
+import LakeCurrent from '../elements/lakeCurrent';
 import Weather from '../elements/weather';
 import Table from '../elements/table';
 
+// Fetch Strings
 const TABLEFETCHSTRING = 'http://localhost:5050/powell/last-14-days';
+const WEATHERSTRING = 'http://localhost:5050/powell/weather';
+const SUNRISESUNSETSTRING = 'http://localhost:5050/powell/sunrise-sunset';
+const ALERTSTRING = 'http://localhost:5050/powell/alerts';
   
 ChartJS.register(
     CategoryScale,
@@ -228,8 +232,15 @@ const LakePowell: React.FC = () => {
         <div>
             <Navbar />
             <div className='m-4 grid grid-cols-1 gap-4 lg:grid-cols-2 md:mx-2 md:px-2'>
-                <Current />
-                <Weather />
+                <LakeCurrent 
+                    fetchString={TABLEFETCHSTRING}
+                    name='Lake Powell'
+                />
+                <Weather
+                    fetchWeatherString={WEATHERSTRING}
+                    fetchSSString={SUNRISESUNSETSTRING}
+                    fetchAlertsString={ALERTSTRING}
+                />
             </div>
             <div className='bg-background rounded-lg shadow-xl m-4 flex flex-col items-center h-auto'>
                 <div className='w-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-subtitle rounded-t-lg h-8'>
