@@ -48,14 +48,27 @@ const BasinGraph: React.FC<BasinGraphObject> = ({ fetchString }) => {
                 borderWidth: 0,
             },
         ],
-        options: {},
+        options: {}
+    });
+    const [snowWaterData, setSnowWaterData] = useState<GraphData>({
+        labels: [] as string[],
+        datasets: [
+            {
+                label: '',
+                data: [],
+                backgroundColor: '',
+                borderColor: '',
+                borderWidth: 0,
+            },
+        ],
+        options: {}
     });
 
     useEffect(() => {
         const fetchBasinData = async () => {
             try {
-                const response = await axios.get(fetchString)
-                setReadings(response.data)
+                const response = await axios.get(fetchString);
+                setReadings(response.data);
             } catch (e) {
                 console.error('Unsucessful retrieval of database');
                 throw new Error(`Fetch Error: ${e}`)
@@ -68,64 +81,69 @@ const BasinGraph: React.FC<BasinGraphObject> = ({ fetchString }) => {
 
     useEffect(() => {
         const updatePrecipitationData = () => {
-            const currentYear = new Date().getFullYear();
             setPrecipitationData({
                 labels: [`${prevYear}`, `${currYear}`],
                 datasets: [
                     {
-                        label: `${prevYear}`,  // Label for the previous year's bar
+                        label: `${prevYear}`,
                         data: setData('Precipitation Accumulation' as keyof BasinReading),  // Data for the previous year
-                        backgroundColor: '#1B98DF80',  // Color for previous year's bar
+                        backgroundColor: '#1B98DF80',
                         borderColor: '#1B98DF',
                         borderWidth: 1,
                     },
                     {
-                        label: `${currYear}`,  // Label for the current year's bar
+                        label: `${currYear}`,
                         data: setData('Precipitation Accumulation' as keyof BasinReading),  // Data for the current year
-                        backgroundColor: '#0F537980',  // Color for current year's bar
+                        backgroundColor: '#0F537980',
                         borderColor: '#0F5379',
                         borderWidth: 1,
                     },
                 ],
-                options: {}
+                options: {
+                    scales: {
+                        x: { grid: { display: false } },
+                    }
+                }
+            });
+        };
+
+        const updateSnowWaterData = () => {
+            setSnowWaterData({
+                labels: [`${prevYear}`, `${currYear}`],
+                datasets: [
+                    {
+                        label: `${prevYear}`,
+                        data: setData('Snow Water Equivalent' as keyof BasinReading),  // Data for the previous year
+                        backgroundColor: '#1B98DF80',
+                        borderColor: '#1B98DF',
+                        borderWidth: 1,
+                    },
+                    {
+                        label: `${currYear}`,
+                        data: setData('Snow Water Equivalent' as keyof BasinReading),  // Data for the current year
+                        backgroundColor: '#0F537980',
+                        borderColor: '#0F5379',
+                        borderWidth: 1,
+                    },
+                ],
+                options: {
+                    scales: {
+                        x: { grid: { display: false } },
+                    }
+                }
             });
         };
 
         updatePrecipitationData();
+        updateSnowWaterData();
 
     }, [readings]);
 
     const setData = (field: keyof BasinReading): number[] => {
         return readings
-            .filter(reading => {
-                const currDate = new Date(reading['Date']);
-                const referenceDate = new Date(readings[0]['Date']);
-                referenceDate.setDate(referenceDate.getDate() - 365);
-                return currDate >= referenceDate;
-            })
             .map(reading => typeof reading[field] === 'number' ? reading[field] : 0)
             .reverse();
     };
-
-    // const setDates = (): string[] => {
-    //     return readings
-    //         .filter(reading => {
-    //             const currDate = new Date(reading['Date']);
-    //             const referenceDate = new Date(readings[0]['Date']);
-    //             referenceDate.setDate(referenceDate.getDate() - selectedDateRange);
-    //             return currDate >= referenceDate;
-    //         })
-    //         .map(reading => new Date(reading['Date']).toLocaleDateString('en-US', {
-    //             month: '2-digit',
-    //             day: '2-digit',
-    //             timeZone: 'UTC'
-    //         }))
-    //         .reverse();
-    // };
-
-    // const renderGraph = (data: any) => {
-        
-    // };
 
     return (
         <div className='text-dark_gray text-subtitle rounded-lg'>
@@ -156,7 +174,7 @@ const BasinGraph: React.FC<BasinGraphObject> = ({ fetchString }) => {
                     </label>
                     <div className='w-full h-full flex items-center flex-col p-5 relative'>
                         <Bar 
-                            data={precipitationData} 
+                            data={snowWaterData} 
                             options={{
                                 responsive: true,
                                 maintainAspectRatio: true,
