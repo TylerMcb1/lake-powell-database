@@ -3,9 +3,11 @@ import React, { useState, useEffect } from 'react';
 // Element Import
 import Navbar from '../elements/navbar';
 import BasinCurrent from '../elements/basinCurrent';
+import BasinGraphs from '../elements/basinGraphs';
 
 // Fetch Strings
 const TABLEFETCHSTRING = 'http://localhost:5050/upper-green/last-14-days';
+const CHARTFETCHSTRING = 'http://localhost:5050/upper-green/last-365-days'
 
 const UpperGreen = () => {
     return (
@@ -15,6 +17,9 @@ const UpperGreen = () => {
                 <BasinCurrent 
                     fetchString={TABLEFETCHSTRING}
                     name='Upper Green Basin'
+                />
+                <BasinGraphs
+                    fetchString={CHARTFETCHSTRING}
                 />
             </div>
         </div>

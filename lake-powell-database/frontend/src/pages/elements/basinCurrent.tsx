@@ -8,7 +8,7 @@ interface BasinReading {
     _id: string;
     Date: string;
     "Snow Water Equivalent": number;
-    // "Snow Depth": number;
+    "Snow Depth": number;
     "Precipitation Accumulation": number;
     "Precipitation Increment": number;
     "Snow Water % of Median": number;
@@ -23,11 +23,9 @@ interface BasinCurrentObject {
 const BasinCurrent: React.FC<BasinCurrentObject> = ({ fetchString, name }) => {
     const [currentReadings, setCurrentReadings] = useState<BasinReading[]>([]);
     const [snowWaterEquivalent, setSnowWaterEquivalent] = useState<number>(0);
-    // const [snowDepth, setSnowDepth] = useState<number>(0);
+    const [snowDepth, setSnowDepth] = useState<number>(0);
     const [precipitationAccumulation, setPrecipitationAccumulation] = useState<number>(0);
     const [precipitationIncrement, setPrecipitationIncrement] = useState<number>(0);
-    const [snowWaterMedian, setSnowWaterMedian] = useState<number>(0);
-    const [precipitationMedian, setPrecipitationMedian] = useState<number>(0);
 
     useEffect(() => {
         const getCurrentData = async () => {
@@ -37,14 +35,6 @@ const BasinCurrent: React.FC<BasinCurrentObject> = ({ fetchString, name }) => {
                 // Type check response.data
                 if (Array.isArray(response.data)) {
                     setCurrentReadings(response.data);
-                    // setCurrentReadings(
-                    //     readings.filter((reading) => {
-                    //         const currDate = new Date(reading['Date']);
-                    //         const referenceDate = new Date(readings[0]['Date']);
-                    //         referenceDate.setDate(referenceDate.getDate() - 2);
-                    //         return currDate >= referenceDate;
-                    //     })
-                    // );
                 } else {
                     throw new Error('Invalid response format')
                 }
@@ -70,11 +60,9 @@ const BasinCurrent: React.FC<BasinCurrentObject> = ({ fetchString, name }) => {
         };
         
         setSnowWaterEquivalent(calculateChange('Snow Water Equivalent' as keyof BasinReading));
-        // setSnowDepth(calculateChange('Snow Depth (in) Start of Day Values' as keyof BasinReading));
+        setSnowDepth(calculateChange('Snow Depth (in) Start of Day Values' as keyof BasinReading));
         setPrecipitationAccumulation(calculateChange('Precipitation Accumulation' as keyof BasinReading));
         setPrecipitationIncrement(calculateChange('Precipitation Increment' as keyof BasinReading));
-        setSnowWaterMedian(calculateChange('Snow Water % of Median' as keyof BasinReading));
-        setPrecipitationMedian(calculateChange('Precipitation % of Median' as keyof BasinReading))
 
     }, [currentReadings]);
 
@@ -110,16 +98,17 @@ const BasinCurrent: React.FC<BasinCurrentObject> = ({ fetchString, name }) => {
                 <label>
                     Snow Water Equivalent:
                     {(currentReadings[0]?.['Snow Water Equivalent'] !== undefined &&
-                      currentReadings[0]?.['Snow Water Equivalent'] !== undefined) ? 
+                      currentReadings[0]?.['Snow Water Equivalent'] !== null) ? 
                     ` ${currentReadings[0]?.['Snow Water Equivalent']} inches (${snowWaterEquivalent}%)` : ' N/A'}
                     {displayArrow(snowWaterEquivalent)}
                 </label>
-                {/* <label>
+                {(currentReadings[0]?.['Snow Depth'] !== undefined && currentReadings[0]?.['Snow Depth'] !== null) ? (
+                <label>
                     Snow Depth:
-                    {currentReadings[0]?.['Snow Depth'] !== undefined ?
-                    ` ${currentReadings[0]?.['Snow Depth']} inches (${snowDepth}%)` : ' N/A'}
+                    ` ${currentReadings[0]?.['Snow Depth']} inches (${snowDepth}%)`
                     {displayArrow(snowDepth)}
-                </label> */}
+                </label>
+                ) : (<div />)}
                 <label>
                     Annual Precipitation:
                     {(currentReadings[0]?.['Precipitation Accumulation'] !== undefined &&
