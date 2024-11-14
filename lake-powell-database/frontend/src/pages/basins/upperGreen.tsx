@@ -3,6 +3,7 @@ import Navbar from '../elements/navbar';
 import BasinCurrent from '../elements/basinCurrent';
 import BasinGraphs from '../elements/basinGraphs';
 import BasinChart from '../elements/basinChart';
+import Table from '../elements/table';
 
 // Fetch Strings
 const TABLEFETCHSTRING = 'http://localhost:5050/upper-green/last-14-days';
@@ -25,6 +26,10 @@ const UpperGreen = () => {
                 fetchCurrentString={CHARTFETCHSTRING}
                 fetchHistoricalString={CHARTFETCHSTRING}
                 name='Upper Green Basin'
+            />
+            <Table 
+                fetchString={TABLEFETCHSTRING}
+                type='basin'
             />
         </div>
     );

@@ -393,7 +393,7 @@ const LakePowell: React.FC = () => {
                         </div>
                     ) : (
                         <div className='w-full'>
-                             <div className='flex justify-center items-center space-x-1'>
+                             <div className='w-full flex justify-center space-x-4'>
                                 <label>Export As:</label>
                                 <select value={selectedExport} onChange={handleExportChange}  className='rounded-md shadow-lg mx-1 px-1'>
                                     {ExportOptions.map((option, index) => (
