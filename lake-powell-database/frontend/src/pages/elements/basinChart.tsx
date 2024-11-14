@@ -12,18 +12,6 @@ import {
     Legend,
 } from 'chart.js';
 import axios from 'axios';
-
-// Element Import
-import Navbar from '../elements/navbar';
-import LakeCurrent from '../elements/lakeCurrent';
-import Weather from '../elements/weather';
-import Table from '../elements/table';
-
-// Fetch Strings
-const TABLEFETCHSTRING = 'http://localhost:5050/powell/last-14-days';
-const WEATHERSTRING = 'http://localhost:5050/powell/weather';
-const SUNRISESUNSETSTRING = 'http://localhost:5050/powell/sunrise-sunset';
-const ALERTSTRING = 'http://localhost:5050/powell/alerts';
   
 ChartJS.register(
     CategoryScale,
@@ -47,14 +35,15 @@ type ChartData = {
     options: object;
 };
 
-interface Reading {
+interface BasinReading {
     _id: string;
     Date: string;
-    'Elevation (feet)': number;
-    'Storage (af)': number;
-    'Evaporation (af)': number;
-    'Inflow** (cfs)': number;
-    'Total Release (cfs)': number;
+    'Snow Water Equivalent': number;
+    'Snow Depth': number;
+    'Precipitation Accumulation': number;
+    'Precipitation Increment': number;
+    'Snow Water % of Median': number;
+    'Precipitation % of Median': number;
 };
 
 interface TableField {
@@ -63,19 +52,26 @@ interface TableField {
 };
 
 const FieldOptions: TableField[] = [
-    { key: 'Water Level', value: 'Elevation (feet)' },
-    { key: 'Inflows', value: 'Inflow** (cfs)' },
-    { key: 'Outflows', value: 'Total Release (cfs)' },
-    { key: 'Storage', value: 'Storage (af)' }
+    { key: 'Snow Water Equivalent', value: 'Snow Water Equivalent' },
+    { key: 'Snow Depth', value: 'Snow Depth' },
+    { key: 'Precipitation Accumulation', value: 'Precipitation Accumulation' },
+    { key: 'Daily Precipitation', value: 'Precipitation Increment'},
+
 ];
+
+interface BasinChartObject {
+    fetchCurrentString: string;
+    fetchHistoricalString: string;
+    name: string;
+};
 
 const Years: number[] = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023];
 const ExportOptions: string[] = ['PDF', 'JPEG', 'PNG', 'BNF'];
 const DateRange: number[] = [14, 365];
 
-const LakePowell: React.FC = () => {
+const BasinChart: React.FC<BasinChartObject> = ({ fetchCurrentString, fetchHistoricalString, name }) => {
     // Graph/Export Options
-    const [selectedField, setSelectedField] = useState<string>('Elevation (feet)');
+    const [selectedField, setSelectedField] = useState<string>('Snow Water Equivalent');
     const [selectedDateRange, setSelectedDateRange] = useState<number>(14);
     const [selectedOverlay, setSelectedOverlay] = useState<number>(0);
     const [selectedExport, setSelectedExport] = useState<string>('PDF');
@@ -94,7 +90,7 @@ const LakePowell: React.FC = () => {
     const [displayCurrent, setDisplayCurrent] = useState<boolean>(true);
 
     // Readings and Chart Data
-    const [readings, setReadings] = useState<Reading[]>([]);
+    const [readings, setReadings] = useState<BasinReading[]>([]);
     const [chartData, setChartData] = useState<ChartData>({
         labels: [] as string[],
         datasets: [
@@ -112,7 +108,8 @@ const LakePowell: React.FC = () => {
     useEffect(() => {
         const fetchChartData = async () => {
             try {
-                const response = await axios.get('http://localhost:5050/powell/last-365-days')
+                const response = await axios.get(fetchCurrentString)
+                console.log(response.data);
                 setReadings(response.data)
             } catch (e) {
                 console.error('Unsucessful retrieval of database');
@@ -137,7 +134,7 @@ const LakePowell: React.FC = () => {
                         backgroundColor: '#1B98DF80',
                         fill: false,
                         borderColor: '#1B98DF',
-                        data: setData(selectedField as keyof Reading),
+                        data: setData(selectedField as keyof BasinReading),
                     },
                 ],
                 options: {}
@@ -155,7 +152,7 @@ const LakePowell: React.FC = () => {
 
     const fetchHistorical = async () => {
         try {
-            const response = await axios.get('http://localhost:5050/powell/historical', {
+            const response = await axios.get(fetchHistoricalString, {
                 params: {
                     startDate: historicalStartDate,
                     endDate: historicalEndDate
@@ -168,7 +165,7 @@ const LakePowell: React.FC = () => {
         }
     };
 
-    const setData = (field: keyof Reading): number[] => {
+    const setData = (field: keyof BasinReading): number[] => {
         return readings
             .filter(reading => {
                 const currDate = new Date(reading['Date']);
@@ -230,21 +227,9 @@ const LakePowell: React.FC = () => {
 
     return (
         <div>
-            <Navbar />
-            <div className='m-4 grid grid-cols-1 gap-4 lg:grid-cols-2 md:mx-2 md:px-2'>
-                <LakeCurrent 
-                    fetchString={TABLEFETCHSTRING}
-                    name='Lake Powell'
-                />
-                <Weather
-                    fetchWeatherString={WEATHERSTRING}
-                    fetchSSString={SUNRISESUNSETSTRING}
-                    fetchAlertsString={ALERTSTRING}
-                />
-            </div>
             <div className='bg-background rounded-lg shadow-xl m-4 flex flex-col items-center h-auto'>
                 <div className='w-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-subtitle rounded-t-lg h-8'>
-                    <label>Lake Powell {selectedField}</label>
+                    <label>{name} {selectedField}</label>
                 </div>
                 <div className='w-full h-full flex items-center flex-col p-5 relative'>
                     <Line data={chartData} 
@@ -410,12 +395,8 @@ const LakePowell: React.FC = () => {
                     )}
                 </div>
             </div>
-            <Table 
-                fetchString={TABLEFETCHSTRING}
-                type='reservoir'
-            />
         </div>
     );
 };
 
-export default LakePowell;
+export default BasinChart;
