@@ -227,7 +227,7 @@ const BasinChart: React.FC<BasinChartObject> = ({ fetchCurrentString, fetchHisto
 
     return (
         <div>
-            <div className='bg-background rounded-lg shadow-xl m-4 flex flex-col items-center h-auto'>
+            <div className='bg-background rounded-lg shadow-xl m-4 flex flex-col items-center h-auto lg:h-[45em]'>
                 <div className='w-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-subtitle rounded-t-lg h-8'>
                     <label>{name} {selectedField}</label>
                 </div>

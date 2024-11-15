@@ -69,7 +69,6 @@ const FieldOptions: TableField[] = [
     { key: 'Storage', value: 'Storage (af)' }
 ];
 
-const Years: number[] = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023];
 const ExportOptions: string[] = ['PDF', 'JPEG', 'PNG', 'BNF'];
 const DateRange: number[] = [14, 365];
 
@@ -77,10 +76,9 @@ const LakePowell: React.FC = () => {
     // Graph/Export Options
     const [selectedField, setSelectedField] = useState<string>('Elevation (feet)');
     const [selectedDateRange, setSelectedDateRange] = useState<number>(14);
-    const [selectedOverlay, setSelectedOverlay] = useState<number>(0);
     const [selectedExport, setSelectedExport] = useState<string>('PDF');
-    const [historicalStartDate, setHistoricalStartDate] = useState<string>('');
-    const [historicalEndDate, setHistoricalEndDate] = useState<string>('');
+    // const [historicalStartDate, setHistoricalStartDate] = useState<string>('');
+    // const [historicalEndDate, setHistoricalEndDate] = useState<string>('');
     const [showMean, setShowMean] = useState<boolean>(false);
     const [mean, setMean] = useState<number>(0);
     const [showMedian, setShowMedian] = useState<boolean>(false);
@@ -109,6 +107,7 @@ const LakePowell: React.FC = () => {
         options: {},
     });
 
+    // Fetch Chart Data
     useEffect(() => {
         const fetchChartData = async () => {
             try {
@@ -126,6 +125,7 @@ const LakePowell: React.FC = () => {
 
     }, [displayCurrent]);
 
+    // Update Chart data with date range or selected field
     useEffect(() => {
         const updateData = () => {
             const currentYear = new Date().getFullYear();
@@ -144,29 +144,83 @@ const LakePowell: React.FC = () => {
             });
         };
 
+        // Toggle Mean and Median off when chart updating
+        setShowMean(false);
+        setShowMedian(false);
+
         updateData();
 
     }, [selectedField, selectedDateRange, readings]);
 
-    const handleHistoricalSubmit = () => {
-        setDisplayCurrent(false);
-        fetchHistorical();
-    };
+    // Update mean and/or median
+    useEffect(() => {
+        const calculateMean = () => {
+            const total = setData(selectedField as keyof Reading).reduce((sum, value) => sum + value, 0);
+            setMean(total / (selectedDateRange + 1));
+        };
 
-    const fetchHistorical = async () => {
-        try {
-            const response = await axios.get('http://localhost:5050/powell/historical', {
-                params: {
-                    startDate: historicalStartDate,
-                    endDate: historicalEndDate
-                }
+        const calculateMedian = () => {
+            const sorted = setData(selectedField as keyof Reading).sort((a, b) => a - b);
+            const mid = Math.floor(sorted.length / 2);
+            setMedian(sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid]);
+        };
+
+        const renderMeanMedian = () => {
+            const newDatasets = chartData.datasets.filter(dataset => 
+                dataset.label !== 'Mean' && dataset.label !== 'Median'
+            );
+    
+            if (showMean) {
+                newDatasets.push({
+                    label: 'Mean',
+                    backgroundColor: '#EF614C80',
+                    fill: false,
+                    borderColor: '#EF614C',
+                    data: Array(selectedDateRange + 1).fill(mean),
+                });
+            }
+    
+            if (showMedian) {
+                newDatasets.push({
+                    label: 'Median',
+                    backgroundColor: '#0CCE7180',
+                    fill: false,
+                    borderColor: '#0CCE71',
+                    data: Array(selectedDateRange + 1).fill(median),
+                });
+            }
+    
+            setChartData({
+                ...chartData,
+                datasets: newDatasets,
             });
-            setReadings(response.data);
-        } catch (e) {
-            console.error('Unsucessful retrieval of database');
-            throw new Error(`Fetch Error: ${e}`)
-        }
-    };
+        };
+
+        calculateMean();
+        calculateMedian();
+        renderMeanMedian();
+
+    }, [showMean, showMedian]);
+
+    // const handleHistoricalSubmit = () => {
+    //     setDisplayCurrent(false);
+    //     fetchHistorical();
+    // };
+
+    // const fetchHistorical = async () => {
+    //     try {
+    //         const response = await axios.get('http://localhost:5050/powell/historical', {
+    //             params: {
+    //                 startDate: historicalStartDate,
+    //                 endDate: historicalEndDate
+    //             }
+    //         });
+    //         setReadings(response.data);
+    //     } catch (e) {
+    //         console.error('Unsucessful retrieval of database');
+    //         throw new Error(`Fetch Error: ${e}`)
+    //     }
+    // };
 
     const setData = (field: keyof Reading): number[] => {
         return readings
@@ -212,21 +266,17 @@ const LakePowell: React.FC = () => {
         setSelectedField(event.target.value);
     };
 
-    const handleOverlayChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedOverlay(Number(event.target.value));
-    };
-
     const handleExportChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedExport(event.target.value);
     };
 
-    const handleHistoricalStartChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setHistoricalStartDate(event.target.value);
-    };
+    // const handleHistoricalStartChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     setHistoricalStartDate(event.target.value);
+    // };
 
-    const handleHistoricalEndChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setHistoricalEndDate(event.target.value);
-    };
+    // const handleHistoricalEndChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     setHistoricalEndDate(event.target.value);
+    // };
 
     return (
         <div>
@@ -242,7 +292,7 @@ const LakePowell: React.FC = () => {
                     fetchAlertsString={ALERTSTRING}
                 />
             </div>
-            <div className='bg-background rounded-lg shadow-xl m-4 flex flex-col items-center h-auto'>
+            <div className='bg-background rounded-lg shadow-xl m-4 flex flex-col items-center h-auto lg:h-[45em]'>
                 <div className='w-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-subtitle rounded-t-lg h-8'>
                     <label>Lake Powell {selectedField}</label>
                 </div>
@@ -264,24 +314,24 @@ const LakePowell: React.FC = () => {
             </div>
             <div className='m-4 grid grid-cols-1 gap-4 lg:grid-cols-2 md:mx-2 md:px-2 text-dark_gray text-body'>
                 <div className='bg-background rounded-lg shadow-xl flex flex-col items-center'>
-                    <div className='flex w-full'>
+                    <div className='bg-gray rounded-lg flex w-full'>
                         <button 
                             className={`w-1/2 rounded-t-lg py-1 border-dark_gray 
-                            ${selectedTimeTab === 'current' ? 'border-t border-r' : 'border-b'}`}
+                            ${selectedTimeTab === 'current' ? 'bg-background border-t border-r' : 'border-b'}`}
                             onClick={() => setSelectedTimeTab('current')}
                         >
                             Current
                         </button>
                         <button 
-                            className={`w-1/2 rounded-t-lg py-1 border-dark_gray 
-                            ${selectedTimeTab === 'historical' ? 'border-t border-l' : 'border-b'}`}
-                            onClick={() => setSelectedTimeTab('historical')}
+                            className={`w-1/2 rounded-t-lg py-1 border-dark_gray
+                            ${selectedTimeTab === 'historical' ? 'bg-background border-t border-l' : 'border-b'}`}
+                            // onClick={() => setSelectedTimeTab('historical')}
                         >
                             Historical
                         </button>
                     </div>
                     {selectedTimeTab === 'current' ? (
-                        <div className='w-full flex flex-col items-center p-4'>
+                        <div className='w-full flex flex-col items-center p-4' /* Why does changing padding affect mean/median? (i.e. px-4 pt-2)*/> 
                             <label>{selectedDateRange} days</label>
                             <div className='w-full flex items-center space-x-4'>
                                 <label>14</label>
@@ -296,7 +346,7 @@ const LakePowell: React.FC = () => {
                         </div>
                     ) : (
                         <div className='w-full'>
-                            <form id='historical' onSubmit={handleHistoricalSubmit}>
+                            {/* <form id='historical' onSubmit={handleHistoricalSubmit}>
                                 <div className='w-full flex justify-center space-x-4 p-4'>
                                     <div className='flex flex-col'>
                                         <label htmlFor='start-date'>Start Date</label>
@@ -320,75 +370,58 @@ const LakePowell: React.FC = () => {
                                 <div className='w-full flex justify-end'>
                                     <button type='submit' className='bg-primary text-black rounded-lg shadow-lg px-4 mb-2 mr-2'>Go</button>
                                 </div>
-                            </form>
+                            </form> */}
                         </div>
                     )}
                 </div>
                 <div className='bg-background rounded-lg shadow-xl flex flex-col items-center flex-grow'>
-                    <div className='flex w-full'>
+                    <div className='bg-gray rounded-lg flex w-full'>
                         <button 
                             className={`w-1/2 rounded-t-lg py-1 border-dark_gray 
-                            ${selectedOptionsTab === 'options' ? 'border-t border-r' : 'border-b'}`}
+                            ${selectedOptionsTab === 'options' ? 'bg-background border-t border-r' : 'border-b'}`}
                             onClick={() => setSelectedOptionsTab('options')}
                         >
                             Options
                         </button>
                         <button 
-                            className={`w-1/2 rounded-t-lg py-1 border-dark_gray 
-                            ${selectedOptionsTab === 'export' ? 'border-t border-l' : 'border-b'}`}
-                            onClick={() => setSelectedOptionsTab('export')}
+                            className={`w-1/2 rounded-t-lg py-1 border-dark_gray bg-gray
+                            ${selectedOptionsTab === 'export' ? 'bg-background border-t border-l' : 'border-b'}`}
+                            // onClick={() => setSelectedOptionsTab('export')}
                         >
                             Export
                         </button>
                     </div>
                     {selectedOptionsTab === 'options' ? (
-                        <div className='w-full'>
-                            <div className='flex w-full justify-center p-4'>
-                                <div className='flex flex-col'>
-                                    <div className='flex items-center space-x-1'>
-                                        <label>Mean</label>
-                                        <input 
-                                            type='checkbox' 
-                                            id='mean' 
-                                            className='rounded-md shadow-lg'
-                                            onChange={handleMeanChange}
-                                        />
-                                    </div>
-                                    <div className='flex items-center space-x-1'>
-                                        <label>Median</label>
-                                        <input 
-                                            type='checkbox' 
-                                            id='median' 
-                                            className='rounded-md shadow-lg'
-                                            onChange={handleMedianChange}
-                                        />
-                                    </div>
-                                </div>
-                                <div className='flex flex-col'>
-                                    <div className='flex items-center space-x-1'>
-                                        <label>Select a field:</label>
-                                        <select value={selectedField} onChange={handleFieldChange}  className='rounded-md shadow-lg mx-1 px-1'>
-                                            {FieldOptions.map((option) => (
-                                            <option key={option.key} value={option.value}>
-                                                {option.key}
-                                            </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className='flex items-center space-x-1'>
-                                        <label>Historical Overlay:</label>
-                                        <select value={selectedOverlay} onChange={handleOverlayChange}  className='rounded-md shadow-lg mx-1 px-1'>
-                                            {Years.map((year, index) => (
-                                            <option key={index} value={year}>
-                                                {year}
-                                            </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
+                        <div className='flex w-full h-full justify-center space-x-4 p-4'>
+                            <div className='flex items-center space-x-1'>
+                                <label>Mean</label>
+                                <input 
+                                    type='checkbox' 
+                                    id='mean' 
+                                    checked={showMean}
+                                    className='rounded-md shadow-lg'
+                                    onChange={handleMeanChange}
+                                />
                             </div>
-                            <div className='w-full flex justify-end'>
-                                <button className='bg-primary text-black rounded-lg shadow-lg px-4 mb-2 mr-2'>Go</button>
+                            <div className='flex items-center space-x-1'>
+                                <label>Median</label>
+                                <input 
+                                    type='checkbox' 
+                                    id='median' 
+                                    checked={showMedian}
+                                    className='rounded-md shadow-lg'
+                                    onChange={handleMedianChange}
+                                />
+                            </div>
+                            <div className='flex items-center space-x-1'>
+                                <label>Select a field:</label>
+                                <select value={selectedField} onChange={handleFieldChange}  className='rounded-md shadow-lg mx-1 px-1'>
+                                    {FieldOptions.map((option) => (
+                                        <option key={option.key} value={option.value}>
+                                            {option.key}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
                     ) : (

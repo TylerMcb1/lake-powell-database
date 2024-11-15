@@ -18,7 +18,7 @@ interface SlideshowProps {
 
 const Slideshow: React.FC<SlideshowProps> = ({ images, interval = 3000 }) => {
     return (
-        <div className='relative rounded-lg overflow-hidden m-5'>
+        <div className='relative rounded-lg overflow-hidden m-4'>
             <Slide 
                 duration={interval}
                 prevArrow={
