@@ -3,6 +3,7 @@ import React from 'react';
 // Element Import
 import Navbar from './elements/navbar';
 import Slideshow from './elements/slideshow';
+import Textbox from './elements/textbox';
 
 interface SlideshowImage {
     name: string;
@@ -38,6 +39,7 @@ const Home: React.FC = () => {
         <div>
             <Navbar />
             <Slideshow images={images} interval={5000} />
+            <Textbox />
         </div>
     );
 };

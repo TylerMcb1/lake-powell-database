@@ -39,7 +39,7 @@ const Navbar: React.FC = () => {
 
     return (
         <nav 
-            className='flex items-center w-full h-16 flex bg-gradient-to-r 
+            className='flex relative z-20 items-center w-full h-16 bg-gradient-to-r 
             from-gray to-primary rounded-b-lg text-title font-sans shadow-xl px-6'
         >
             <label>Colorado River Data</label>
