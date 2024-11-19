@@ -4,6 +4,9 @@ import { openConnection, closeConnection } from './connection.js';
 
 // Import records
 import powellRecords from './reservoirs/powell.js';
+import meadRecords from './reservoirs/mead.js';
+import mohaveRecords from './reservoirs/mohave.js';
+import havasuRecords from './reservoirs/havasu.js';
 import upperGreenRecords from './basins/upperGreen.js';
 
 const PORT = process.env.PORT || 5050;
@@ -36,8 +39,13 @@ const shutDown = async () => {
     try {
         await openConnection();
 
-        // Mount the powell records router on the '/' path
+        // Mount reservoir records on respective path
         app.use('/powell/', powellRecords);
+        app.use('/mead/', meadRecords);
+        app.use('/mohave/', mohaveRecords);
+        app.use('/havasu/', havasuRecords);
+
+        // Mount basin records on respective path
         app.use('/upper-green/', upperGreenRecords);
 
         // Error handling middleware
