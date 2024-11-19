@@ -113,7 +113,7 @@ router.get('/weather', async(req, res) => {
 
     // Obtain updated weather data otherwise
     try {
-        const response = await axios.get('https://api.weather.gov/gridpoints/FGZ/37,111/forecast/hourly?units=us', {
+        const response = await axios.get('https://api.weather.gov/gridpoints/SLC/101,7/forecast/hourly?units=us', {
             headers: { 'User-Agent': 'ColoradoRiverData/1.0 (ColoradoRiverData@gmail.com)' },
             timeout: APITIMEOUT,
         });
@@ -146,7 +146,7 @@ router.get('/sunrise-sunset', async(req, res) => {
 
     // Obtain updated sunrise sunset data otherwise
     try {
-        const response = await axios.get('https://api.sunrise-sunset.org/json?lat=37&lng=-111&formatted=0', {
+        const response = await axios.get('https://api.sunrise-sunset.org/json?lat=37.060&lng=-111.276&formatted=0', {
             headers: { 'User-Agent': 'ColoradoRiverData/1.0 (ColoradoRiverData@gmail.com)' },
             timeout: APITIMEOUT,
         });

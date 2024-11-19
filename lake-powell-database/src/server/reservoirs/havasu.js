@@ -78,6 +78,71 @@ router.get('/last-365-days', async(req, res) => {
     }
 });
 
+router.get('/weather', async(req, res) => {
+    const currentTime = Date.now();
+    
+    // Return cached Weather data if time inteval > 1 minutes
+    if (cachedWeather !== null && (currentTime - lastFetchedWeather < FETCHINTERVAL)) {
+        return res.send(JSON.stringify(cachedWeather, null, 2)).status(200);
+    }
+
+    // Obtain updated weather data otherwise
+    try {
+        const response = await axios.get('https://api.weather.gov/gridpoints/VEF/139,19/forecast/hourly?units=us', {
+            headers: { 'User-Agent': 'ColoradoRiverData/1.0 (ColoradoRiverData@gmail.com)' },
+            timeout: APITIMEOUT,
+        });
+
+        // Build current weather object and update cached timestamp
+        cachedWeather = await response.data.properties.periods;
+        lastFetchedWeather = currentTime;
+
+        if (cachedWeather !== undefined) {
+            res.send(JSON.stringify(cachedWeather, null, 2)).status(200);
+        } else {
+            throw new Error('Unable to locate weather gridpoint properties');
+        }
+    } catch (error) {
+        // Timeout error
+        if (error.code === 'ECONNABORTED') {
+            return res.status(504).send({ message: 'Error: API call timed out' });
+        }
+        res.status(500).send({ message: 'Error fetching weather API: ', error: error.message })
+    }
+});
+
+router.get('/sunrise-sunset', async(req, res) => {
+    const currentTime = Date.now();
+
+    // Return cached Sunrise and Sunset data if time inteval > 1 minutes
+    if (cachedSunriseSunset !== null && (currentTime - lastFetchedSS < FETCHINTERVAL)) {
+        return res.send(JSON.stringify(cachedSunriseSunset, null, 2)).status(200);
+    }
+
+    // Obtain updated sunrise sunset data otherwise
+    try {
+        const response = await axios.get('https://api.sunrise-sunset.org/json?lat=34.479&lng=-114.378&formatted=0', {
+            headers: { 'User-Agent': 'ColoradoRiverData/1.0 (ColoradoRiverData@gmail.com)' },
+            timeout: APITIMEOUT,
+        });
+
+        // Build current weather object and update cached timestamp
+        cachedSunriseSunset = await response.data.results;
+
+        if (cachedSunriseSunset !== undefined) {
+            res.send(JSON.stringify(cachedSunriseSunset, null, 2)).status(200);
+        } else {
+            throw new Error('Unable to locate sunrise/sunset gridpoint');
+        }
+    } catch (error) {
+        // Timeout error
+        if (error.code === 'ECONNABORTED') {
+            return res.status(504).send({ message: 'Error: API call timed out' });
+        }
+        res.status(500).send({ message: 'Error fetching sunrise/sunset API: ', error: error.message })
+    }
+});
+
 router.post('/new-reading' , async(req, res, next) => {
     try {
         const db = getDB()
