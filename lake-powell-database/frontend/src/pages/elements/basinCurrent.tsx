@@ -5,8 +5,7 @@ import neutralArrow from '../../assets/arrows/neutralArrow.svg';
 import axios from 'axios';
 
 interface BasinReading {
-    _id: string;
-    Date: string;
+    _id: string; // Date
     "Snow Water Equivalent": number;
     "Snow Depth": number;
     "Precipitation Accumulation": number;
@@ -93,7 +92,7 @@ const BasinCurrent: React.FC<BasinCurrentObject> = ({ fetchString, name }) => {
         <div className='bg-background text-dark_gray text-subtitle rounded-lg shadow-xl p-2'>
             <div className='flex flex-col'>
                 <label className='text-title'>
-                    {name} Readings - {currentReadings[0]?.['Date'] ? formatDateYear(currentReadings[0]?.['Date']) : 'N/A'}
+                    {name} Readings - {currentReadings[0]?.['_id'] ? formatDateYear(currentReadings[0]?.['_id']) : 'N/A'}
                 </label>
                 <label>
                     Snow Water Equivalent:

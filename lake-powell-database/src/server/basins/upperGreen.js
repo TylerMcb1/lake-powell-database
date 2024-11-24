@@ -11,7 +11,7 @@ router.get('/last-14-days', async(req, res) => {
         let pipeline = [
             { $match: { Date: { $gt: new Date(new Date().setDate(new Date().getDate() - 15)) } } },
             { $group: { 
-                _id: '$Date', 
+                _id: '$Date',
                 'Snow Water Equivalent': { $avg: '$Snow Water Equivalent (in) Start of Day Values' },
                 'Precipitation Accumulation': { $avg: '$Precipitation Accumulation (in) Start of Day Values' },
                 'Precipitation Increment' : { $avg: '$Precipitation Increment (in)' },
@@ -20,7 +20,7 @@ router.get('/last-14-days', async(req, res) => {
             } },
         ];
 
-        let results = await collection.aggregate(pipeline).sort({ 'Date': -1}).toArray();
+        let results = await collection.aggregate(pipeline).sort({ '_id': -1}).toArray();
         res.send(JSON.stringify(results, null, 2)).status(200);
     } catch (error) {
         res.status(500).send({ message: 'Error fetching record: ', error: error.message });
@@ -44,7 +44,7 @@ router.get('/last-365-days', async(req, res) => {
             } },
         ];
 
-        let results = await collection.aggregate(pipeline).sort({ 'Date': -1}).toArray();
+        let results = await collection.aggregate(pipeline).sort({ '_id': -1}).toArray();
         res.send(JSON.stringify(results, null, 2)).status(200);
     } catch (error) {
         res.status(500).send({ message: 'Error fetching record: ', error: error.message });
