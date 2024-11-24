@@ -42,11 +42,11 @@ const LakeFields: TableField[] = [
 ];
 
 const BasinFields: TableField[] = [
-    {key: 'Date', value: 'Date'},
-    {key: 'Snow Water Equivalent', value: 'Snow Water Equivalent (in) Start of Day Values'},
-    {key: 'Snow Depth', value: 'Snow Depth (in) Start of Day Values'},
-    {key: 'Annual Precipitation', value: 'Precipitation Accumulation (in) Start of Day Values'},
-    {key: 'Daily Precipitation', value: 'Precipitation Increment (in)'}
+    {key: 'Date', value: '_id'},
+    {key: 'Snow Water Equivalent', value: 'Snow Water Equivalent'},
+    {key: 'Snow Depth', value: 'Snow Depth'},
+    {key: 'Annual Precipitation', value: 'Precipitation Accumulation'},
+    {key: 'Daily Precipitation', value: 'Precipitation Increment'}
 ];
 
 const Table: React.FC<TableObject> = ({ fetchString, type }) => {
@@ -72,12 +72,22 @@ const Table: React.FC<TableObject> = ({ fetchString, type }) => {
     useEffect(() => {
         const getTableData = (dateRange: number) => {
             setTableReadings(
-                readings.filter(reading => {
-                    const currDate = new Date(reading['Date']);
-                    const referenceDate = new Date(readings[0]['Date']);
-                    referenceDate.setDate(referenceDate.getDate() - dateRange);
-                    return currDate >= referenceDate;
-                }));
+                (type === 'reservoir') ? (
+                    readings.filter(reading => {
+                        const currDate = new Date(reading['Date']);
+                        const referenceDate = new Date(readings[0]['Date']);
+                        referenceDate.setDate(referenceDate.getDate() - dateRange);
+                        return currDate >= referenceDate;
+                    })
+                ) : (
+                    readings.filter(reading => {
+                        const currDate = new Date(reading['_id']);
+                        const referenceDate = new Date(readings[0]['_id']);
+                        referenceDate.setDate(referenceDate.getDate() - dateRange);
+                        return currDate >= referenceDate;
+                    })
+                )
+            );
         };
 
         getTableData(14);
@@ -142,7 +152,7 @@ const Table: React.FC<TableObject> = ({ fetchString, type }) => {
                                         ${(rowIndex === tableReadings.length - 1 && colIndex === 0) ? 'rounded-bl-lg ' : ' '}
                                         ${(rowIndex === tableReadings.length - 1 && colIndex === BasinFields.length - 1) ? 'rounded-br-lg' : ''}`}
                                     >
-                                        {field.value === 'Date' ? formatDate(reading[field.value]) : (reading as any)[field.value]}
+                                        {field.value === '_id' ? formatDate(reading[field.value]) : (reading as any)[field.value]}
                                     </td>
                                 ))
                             )}

@@ -28,7 +28,7 @@ const UpperGreen = () => {
                 name='Upper Green Basin'
             />
             <Table 
-                fetchString={TABLEFETCHSTRING}
+                fetchString={CHARTFETCHSTRING} // Replace w table fetch
                 type='basin'
             />
         </div>

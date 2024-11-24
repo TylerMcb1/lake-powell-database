@@ -14,7 +14,6 @@ type GraphData = {
         borderColor: string;
         borderWidth: number;
     }[];
-    options: object;
 };
 
 interface BasinReading {
@@ -38,13 +37,11 @@ const BasinGraph: React.FC<BasinGraphObject> = ({ fetchString }) => {
     const [readings, setReadings] = useState<BasinReading[]>([]);
     const [precipitationData, setPrecipitationData] = useState<GraphData>({
         labels: [] as string[],
-        datasets: [],
-        options: {}
+        datasets: []
     });
     const [snowWaterData, setSnowWaterData] = useState<GraphData>({
         labels: [] as string[],
-        datasets: [],
-        options: {}
+        datasets: []
     });
 
     useEffect(() => {
@@ -63,38 +60,48 @@ const BasinGraph: React.FC<BasinGraphObject> = ({ fetchString }) => {
     }, []);
 
     const setData = (key: keyof BasinReading) => {
-        const prevYearData = readings.filter(reading => new Date(reading._id).getFullYear() === prevYear).map(reading => reading[key]);
-        const currYearData = readings.filter(reading => new Date(reading._id).getFullYear() === currYear).map(reading => reading[key]);
-        return { prevYearData, currYearData };
+        const maxPrevYearData: number = Math.max(
+            ...readings
+                .filter(reading => new Date(reading._id)
+                .getFullYear() === prevYear)
+                .map(reading => reading[key])
+                .map(value => (typeof value === "string" && !isNaN(Number(value)) ? Number(value) : value))
+                .filter(value => typeof value === "number" && value !== null)
+        );
+        const maxCurrYearData: number = Math.max(
+            ...readings
+                .filter(reading => new Date(reading._id)
+                .getFullYear() === currYear)
+                .map(reading => reading[key])
+                .map(value => (typeof value === "string" && !isNaN(Number(value)) ? Number(value) : value))
+                .filter(value => typeof value === "number" && value !== null)
+        );
+
+        return { maxPrevYearData, maxCurrYearData };
     };
 
     useEffect(() => {
 
-        const updateGraphData = (key: keyof BasinReading) => {
-            const { prevYearData, currYearData } = setData(key);
+        const updateGraphData = (key: keyof BasinReading): GraphData => {
+            const { maxPrevYearData, maxCurrYearData } = setData(key);
             return{
-                labels: [`Average ${key}`],
+                labels: [`Maximum ${key}`],
                 datasets: [
                     {
                         label: `${prevYear}`,
-                        data: prevYearData,
+                        data: [maxPrevYearData],
                         backgroundColor: '#1B98DF80',
                         borderColor: '#1B98DF',
                         borderWidth: 1,
                     },
                     {
                         label: `${currYear}`,
-                        data: currYearData,
+                        data: [maxCurrYearData],
                         backgroundColor: '#0F537980',
                         borderColor: '#0F5379',
                         borderWidth: 1,
                     },
-                ],
-                options: {
-                    scales: {
-                        x: { grid: { display: false } },
-                    }
-                }
+                ]
             };
         };
 
