@@ -71,26 +71,27 @@ const Table: React.FC<TableObject> = ({ fetchString, type }) => {
 
     useEffect(() => {
         const getTableData = (dateRange: number) => {
-            setTableReadings(
-                (type === 'reservoir') ? (
-                    readings.filter(reading => {
-                        const currDate = new Date(reading['Date']);
-                        const referenceDate = new Date(readings[0]['Date']);
-                        referenceDate.setDate(referenceDate.getDate() - dateRange);
-                        return currDate >= referenceDate;
-                    })
-                ) : (
-                    readings.filter(reading => {
-                        const currDate = new Date(reading['_id']);
-                        const referenceDate = new Date(readings[0]['_id']);
-                        referenceDate.setDate(referenceDate.getDate() - dateRange);
-                        return currDate >= referenceDate;
-                    })
-                )
+            const BasinFieldKeys = BasinFields.map(field => field.key);
+            const filteredReadings = (type === 'reservoir') ? (
+                readings.filter(reading => {
+                    const currDate = new Date(reading['Date']);
+                    const referenceDate = new Date(readings[0]['Date']);
+                    referenceDate.setDate(referenceDate.getDate() - dateRange);
+                    return currDate >= referenceDate;
+                })
+            ) : (
+                readings.filter(reading => {
+                    const currDate = new Date(reading['_id']);
+                    const referenceDate = new Date(readings[0]['_id']);
+                    referenceDate.setDate(referenceDate.getDate() - dateRange);
+                    return currDate >= referenceDate;
+                })
             );
+
+            return filteredReadings;
         };
 
-        getTableData(14);
+        setTableReadings(getTableData(14));
 
     }, [readings]);
 
@@ -141,7 +142,12 @@ const Table: React.FC<TableObject> = ({ fetchString, type }) => {
                                         ${(rowIndex === tableReadings.length - 1 && colIndex === 0) ? 'rounded-bl-lg ' : ' '}
                                         ${(rowIndex === tableReadings.length - 1 && colIndex === LakeFields.length - 1) ? 'rounded-br-lg' : ''}`}
                                     >
-                                        {field.value === 'Date' ? formatDate(reading[field.value]) : (reading as any)[field.value]}
+                                        {(field.value === 'Date')
+                                            ? formatDate(reading[field.value])
+                                            : typeof (reading as any)[field.value] === 'number'
+                                                ? parseFloat((reading as any)[field.value]).toFixed(2) 
+                                                : 0
+                                        }
                                     </td>
                                 ))
                             ) : (
@@ -152,7 +158,12 @@ const Table: React.FC<TableObject> = ({ fetchString, type }) => {
                                         ${(rowIndex === tableReadings.length - 1 && colIndex === 0) ? 'rounded-bl-lg ' : ' '}
                                         ${(rowIndex === tableReadings.length - 1 && colIndex === BasinFields.length - 1) ? 'rounded-br-lg' : ''}`}
                                     >
-                                        {field.value === '_id' ? formatDate(reading[field.value]) : (reading as any)[field.value]}
+                                        {(field.value === '_id')
+                                            ? formatDate(reading[field.value])
+                                            : typeof (reading as any)[field.value] === 'number'
+                                                ? parseFloat((reading as any)[field.value]).toFixed(2) 
+                                                : 0
+                                        }
                                     </td>
                                 ))
                             )}
