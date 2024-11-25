@@ -139,6 +139,10 @@ const BasinChart: React.FC<BasinChartObject> = ({ fetchCurrentString, fetchHisto
             });
         };
 
+        // Toggle Mean and Median off when chart updating
+        setShowMean(false);
+        setShowMedian(false);
+
         updateData();
 
     }, [selectedField, selectedDateRange, readings]);

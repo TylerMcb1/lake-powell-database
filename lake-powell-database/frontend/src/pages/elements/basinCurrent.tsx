@@ -5,7 +5,7 @@ import neutralArrow from '../../assets/arrows/neutralArrow.svg';
 import axios from 'axios';
 
 interface BasinReading {
-    _id: string; // Date
+    _id: string; // Date?
     "Snow Water Equivalent": number;
     "Snow Depth": number;
     "Precipitation Accumulation": number;
@@ -27,7 +27,7 @@ const BasinCurrent: React.FC<BasinCurrentObject> = ({ fetchString, name }) => {
     const [precipitationIncrement, setPrecipitationIncrement] = useState<number>(0);
 
     useEffect(() => {
-        const getCurrentData = async () => {
+        const getCurrYearData = async () => {
             try {
                 const response = await axios.get(fetchString);
 
@@ -43,7 +43,9 @@ const BasinCurrent: React.FC<BasinCurrentObject> = ({ fetchString, name }) => {
             }
         };
 
-        getCurrentData();
+        // const getPrevYearData = async () => {} // Add historical fetch to backend
+
+        getCurrYearData();
         
     }, []);
 

@@ -6,17 +6,17 @@ import BasinChart from '../elements/basinChart';
 import Table from '../elements/table';
 
 // Fetch Strings
-const TABLEFETCHSTRING = 'http://localhost:5050/upper-green/last-14-days';
-const CHARTFETCHSTRING = 'http://localhost:5050/upper-green/last-365-days';
+const TABLEFETCHSTRING = 'http://localhost:5050/lower-green/last-14-days';
+const CHARTFETCHSTRING = 'http://localhost:5050/lower-green/last-365-days';
 
-const UpperGreen = () => {
+const LowerGreen = () => {
     return (
         <div>
             <Navbar />
             <div className='m-4 grid grid-cols-1 gap-4 lg:grid-cols-2 md:mx-2 md:px-2'>
                 <BasinCurrent 
                     fetchString={CHARTFETCHSTRING} // Replace w table fetch
-                    name='Upper Green Basin'
+                    name='Lower Green Basin'
                 />
                 <BasinGraphs
                     fetchString={CHARTFETCHSTRING}
@@ -25,7 +25,7 @@ const UpperGreen = () => {
             <BasinChart 
                 fetchCurrentString={CHARTFETCHSTRING}
                 fetchHistoricalString={CHARTFETCHSTRING}
-                name='Upper Green Basin'
+                name='Lower Green Basin'
             />
             <Table 
                 fetchString={CHARTFETCHSTRING} // Replace w table fetch
@@ -35,4 +35,4 @@ const UpperGreen = () => {
     );
 };
 
-export default UpperGreen;
+export default LowerGreen;

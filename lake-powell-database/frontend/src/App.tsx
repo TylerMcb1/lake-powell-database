@@ -12,6 +12,7 @@ import LakeHavasu from './pages/reservoirs/lakeHavasu';
 
 // Basin Pages
 import UpperGreen from './pages/basins/upperGreen';
+import LowerGreen from './pages/basins/lowerGreen';
 
 interface RouteType {
     path: string;
@@ -24,7 +25,8 @@ const routes: RouteType[] = [
     { path: '/reservoirs/lakemead', element: <LakeMead />},
     { path: '/reservoirs/lakemohave', element: <LakeMohave />},
     { path: '/reservoirs/lakehavasu', element: <LakeHavasu />},
-    { path: '/basins/uppergreen', element: <UpperGreen />}
+    { path: '/basins/uppergreen', element: <UpperGreen />},
+    { path: '/basins/lowergreen', element: <LowerGreen />},
     // Include error 404 page
 ];
 
