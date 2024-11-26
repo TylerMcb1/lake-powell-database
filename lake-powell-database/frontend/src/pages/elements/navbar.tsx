@@ -16,7 +16,7 @@ const pages: NavigateType[] = [
         { name: 'Lake Havasu', path: '/reservoirs/lakehavasu' },
     ]},
     { name: 'Basin Data', path: '/basins', submenu: [
-        { name: 'Overview', path: '/basins/overview' },
+        // { name: 'Overview', path: '/basins/overview' },
         { name: 'Upper Green', path: '/basins/uppergreen' },
         { name: 'Lower Green', path: '/basins/lowergreen' },
         { name: 'White Yampa', path: '/basins/whiteyampa' },

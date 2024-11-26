@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Home from './pages/home';
 import About from './pages/about';
+import ErrorPage from './pages/errorPage';
 
 // Reservoir Pages
 import LakePowell from './pages/reservoirs/lakePowell';
@@ -43,7 +44,7 @@ const routes: RouteType[] = [
     { path: '/basins/dirtydevil', element: <DirtyDevil /> },
     { path: '/basins/lowersanjuan', element: <LowerSanJuan /> },
     { path: '/basins/uppersanjuan', element: <UpperSanJuan /> },
-    // Include error 404 page
+    { path: '*', element: <ErrorPage />}
 ];
 
 const App: React.FC = () => {
