@@ -6,13 +6,14 @@ const router = express.Router();
 router.get('/last-14-days', async(req, res) => {
     try {
         const db = getDB();
-        let collection = await db.collection('UpperGreenBasin');
+        let collection = await db.collection('UpperGreen');
 
         let pipeline = [
             { $match: { Date: { $gt: new Date(new Date().setDate(new Date().getDate() - 15)) } } },
             { $group: { 
                 _id: '$Date',
                 'Snow Water Equivalent': { $avg: '$Snow Water Equivalent (in) Start of Day Values' },
+                'Snow Depth' : { $avg: '$Snow Depth (in) Start of Day Values' },
                 'Precipitation Accumulation': { $avg: '$Precipitation Accumulation (in) Start of Day Values' },
                 'Precipitation Increment' : { $avg: '$Precipitation Increment (in)' },
                 'Snow Water % of Median' : { $avg: '$Snow Water Equivalent % of Median (1991-2020)' },
@@ -30,13 +31,14 @@ router.get('/last-14-days', async(req, res) => {
 router.get('/last-365-days', async(req, res) => {
     try {
         const db = getDB();
-        let collection = await db.collection('UpperGreenBasin');
+        let collection = await db.collection('UpperGreen');
 
         let pipeline = [
             { $match: { Date: { $gt: new Date(new Date().setDate(new Date().getDate() - 365)) } } },
             { $group: { 
                 _id: '$Date', 
                 'Snow Water Equivalent': { $avg: '$Snow Water Equivalent (in) Start of Day Values' },
+                'Snow Depth' : { $avg: '$Snow Depth (in) Start of Day Values' },
                 'Precipitation Accumulation': { $avg: '$Precipitation Accumulation (in) Start of Day Values' },
                 'Precipitation Increment' : { $avg: '$Precipitation Increment (in)' },
                 'Snow Water % of Median' : { $avg: '$Snow Water Equivalent % of Median (1991-2020)' },

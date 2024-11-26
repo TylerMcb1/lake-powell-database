@@ -19,6 +19,13 @@ const pages: NavigateType[] = [
         { name: 'Overview', path: '/basins/overview' },
         { name: 'Upper Green', path: '/basins/uppergreen' },
         { name: 'Lower Green', path: '/basins/lowergreen' },
+        { name: 'White Yampa', path: '/basins/whiteyampa' },
+        { name: 'Colorado Headwaters', path: '/bains/coloradoheadwaters' },
+        { name: 'Upper Dolores', path: '/basins/upperdolores' },
+        { name: 'Gunnison', path: 'basins/gunnison' },
+        { name: 'Dirty Devil', path: 'basins/dirtydevil' },
+        { name: 'Upper San Juan', path: 'basins/uppersanjuan' },
+        { name: 'Lower San Juan', path: 'basins/lowersanjuan' },
     ]},
     { name: 'About', path: '/about/' },
 ];

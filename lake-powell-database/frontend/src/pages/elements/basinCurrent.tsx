@@ -43,8 +43,6 @@ const BasinCurrent: React.FC<BasinCurrentObject> = ({ fetchString, name }) => {
             }
         };
 
-        // const getPrevYearData = async () => {} // Add historical fetch to backend
-
         getCurrYearData();
         
     }, []);
@@ -61,7 +59,7 @@ const BasinCurrent: React.FC<BasinCurrentObject> = ({ fetchString, name }) => {
         };
         
         setSnowWaterEquivalent(calculateChange('Snow Water Equivalent' as keyof BasinReading));
-        setSnowDepth(calculateChange('Snow Depth (in) Start of Day Values' as keyof BasinReading));
+        setSnowDepth(calculateChange('Snow Depth' as keyof BasinReading));
         setPrecipitationAccumulation(calculateChange('Precipitation Accumulation' as keyof BasinReading));
         setPrecipitationIncrement(calculateChange('Precipitation Increment' as keyof BasinReading));
 
@@ -70,9 +68,9 @@ const BasinCurrent: React.FC<BasinCurrentObject> = ({ fetchString, name }) => {
     // Display Up, Down, or Neutral arrow for reading component
     const displayArrow = (percent: number): React.ReactNode => {
         console.log('percentage:' + percent)
-        if (percent >= 100) {
+        if (percent > 0) {
             return <img src={upArrow} alt='Up Arrow' className='inline-block w-4 h-4 ml-2'/>;
-        } else if (percent < 100) {
+        } else if (percent < 0) {
             return <img src={downArrow} alt='Down Arrow' className='inline-block w-4 h-4 ml-2'/>;
         } else {
             return <img src={neutralArrow} alt='Neutral Arrow' className='inline-block w-4 h-4 ml-2'/>;
@@ -100,13 +98,15 @@ const BasinCurrent: React.FC<BasinCurrentObject> = ({ fetchString, name }) => {
                     Snow Water Equivalent:
                     {(currentReadings[0]?.['Snow Water Equivalent'] !== undefined &&
                       currentReadings[0]?.['Snow Water Equivalent'] !== null) ? 
-                    ` ${currentReadings[0]?.['Snow Water Equivalent']} inches (${snowWaterEquivalent}%)` : ' N/A'}
+                    ` ${currentReadings[0]?.['Snow Water Equivalent'].toFixed(3)} inches (${snowWaterEquivalent}%)` : ' N/A'}
                     {displayArrow(snowWaterEquivalent)}
                 </label>
                 {(currentReadings[0]?.['Snow Depth'] !== undefined && currentReadings[0]?.['Snow Depth'] !== null) ? (
                 <label>
                     Snow Depth:
-                    ` ${currentReadings[0]?.['Snow Depth']} inches (${snowDepth}%)`
+                    {(currentReadings[0]?.['Snow Depth'] !== undefined &&
+                      currentReadings[0]?.['Snow Depth'] !== null) ? 
+                    ` ${currentReadings[0]?.['Snow Depth'].toFixed(3)} inches (${snowDepth}%)` : ' N/A'}
                     {displayArrow(snowDepth)}
                 </label>
                 ) : (<div />)}
@@ -114,26 +114,26 @@ const BasinCurrent: React.FC<BasinCurrentObject> = ({ fetchString, name }) => {
                     Annual Precipitation:
                     {(currentReadings[0]?.['Precipitation Accumulation'] !== undefined &&
                       currentReadings[0]?.['Precipitation Accumulation'] !== null) ?
-                    ` ${currentReadings[0]?.['Precipitation Accumulation']} inches (${precipitationAccumulation}%)` : ' N/A'}
+                    ` ${currentReadings[0]?.['Precipitation Accumulation'].toFixed(3)} inches (${precipitationAccumulation}%)` : ' N/A'}
                     {displayArrow(precipitationAccumulation)}
                 </label>
                 <label>
                     Daily Precipitation Increment:
                     {(currentReadings[0]?.['Precipitation Increment'] !== undefined &&
                       currentReadings[0]?.['Precipitation Increment'] !== null) ?
-                    ` ${currentReadings[0]?.['Precipitation Increment']} million acre feet (${precipitationIncrement}%)` : ' N/A'}
+                    ` ${currentReadings[0]?.['Precipitation Increment'].toFixed(3)} inches (${precipitationIncrement}%)` : ' 0 inches'}
                     {displayArrow(precipitationIncrement)}
                 </label>
                 <label>
                     Snow Water Equivalent:
                     {(currentReadings[0]?.['Snow Water % of Median'] !== undefined &&
                       currentReadings[0]?.['Snow Water % of Median'] !== null) ?
-                    ` ${currentReadings[0]?.['Snow Water % of Median']}% of Median` : ' N/A'}
+                    ` ${currentReadings[0]?.['Snow Water % of Median'].toFixed(3)}% of Median` : ' N/A'}
                 </label>
                 <label>
                     Annual Precipitation:
                     {currentReadings[0]?.['Precipitation % of Median'] !== undefined ?
-                    ` ${currentReadings[0]?.['Precipitation % of Median']}% of Median` : ' N/A'}
+                    ` ${currentReadings[0]?.['Precipitation % of Median'].toFixed(3)}% of Median` : ' N/A'}
                 </label>
             </div>
         </div>
