@@ -8,11 +8,11 @@ import LakeChart from '../elements/lakeChart';
 import Table from '../elements/table';
 
 // Fetch Strings
-const CHARTFETCHSTRING = 'http://localhost:5050/mohave/last-365-days';
-const TABLEFETCHSTRING = 'http://localhost:5050/mohave/last-14-days';
-const WEATHERSTRING = 'http://localhost:5050/mohave/weather';
-const SUNRISESUNSETSTRING = 'http://localhost:5050/mohave/sunrise-sunset';
-const ALERTSTRING = 'http://localhost:5050/mohave/alerts';
+const CHARTFETCHSTRING = import.meta.env.VITE_MOHAVE_CHARTFETCHSTRING || '';
+const TABLEFETCHSTRING = import.meta.env.VITE_MOHAVE_TABLEFETCHSTRING || '';
+const WEATHERSTRING = import.meta.env.VITE_MOHAVE_WEATHERSTRING || '';
+const SUNRISESUNSETSTRING = import.meta.env.VITE_MOHAVE_SUNRISESUNSETSTRING || '';
+const ALERTSTRING = import.meta.env.VITE_MOHAVE_ALERTSTRING || '';
 
 const LakeMohave: React.FC = () => {
     return (

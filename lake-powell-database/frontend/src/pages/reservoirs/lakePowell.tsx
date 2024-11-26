@@ -8,11 +8,11 @@ import LakeChart from '../elements/lakeChart';
 import Table from '../elements/table';
 
 // Fetch Strings
-const CHARTFETCHSTRING = 'http://localhost:5050/powell/last-365-days';
-const TABLEFETCHSTRING = 'http://localhost:5050/powell/last-14-days';
-const WEATHERSTRING = 'http://localhost:5050/powell/weather';
-const SUNRISESUNSETSTRING = 'http://localhost:5050/powell/sunrise-sunset';
-const ALERTSTRING = 'http://localhost:5050/powell/alerts';
+const CHARTFETCHSTRING = import.meta.env.VITE_POWELL_CHARTFETCHSTRING || '';
+const TABLEFETCHSTRING = import.meta.env.VITE_POWELL_TABLEFETCHSTRING || '';
+const WEATHERSTRING = import.meta.env.VITE_POWELL_WEATHERSTRING || '';
+const SUNRISESUNSETSTRING = import.meta.env.VITE_POWELL_SUNRISESUNSETSTRING || '';
+const ALERTSTRING = import.meta.env.VITE_POWELL_ALERTSTRING || '';
 
 const LakePowell: React.FC = () => {
     return (

@@ -1,3 +1,5 @@
+import React from 'react';
+
 // Element Import
 import Navbar from '../elements/navbar';
 import BasinCurrent from '../elements/basinCurrent';
@@ -6,11 +8,11 @@ import BasinChart from '../elements/basinChart';
 import Table from '../elements/table';
 
 // Fetch Strings
-const TABLEFETCHSTRING = 'http://localhost:5050/upper-green/last-14-days';
-const CHARTFETCHSTRING = 'http://localhost:5050/upper-green/last-365-days';
-const HISTORICALFETCHSTRING = 'http://localhost:5050/upper-green/historical';
+const TABLEFETCHSTRING = import.meta.env.VITE_UPPERGREEN_TABLEFETCHSTRING || '';
+const CHARTFETCHSTRING = import.meta.env.VITE_UPPERGREEN_CHARTFETCHSTRING || '';
+const HISTORICALFETCHSTRING = import.meta.env.VITE_UPPERGREEN_HISTORICALFETCHSTRING || '';
 
-const UpperGreen = () => {
+const UpperGreen: React.FC = () => {
     return (
         <div>
             <Navbar />
