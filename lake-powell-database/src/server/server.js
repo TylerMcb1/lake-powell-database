@@ -16,6 +16,8 @@ import coloradoHeadwatersRecords from './basins/coloradoHeadwaters.js';
 import doloresRecords from './basins/dolores.js';
 import gunnisonRecords from './basins/gunnison.js';
 import dirtyDevilRecords from './basins/dirtyDevil.js';
+import lowerSanJuanRecords from './basins/lowerSanJuan.js';
+import upperSanJuanRecords from './basins/upperSanJuan.js';
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -61,6 +63,8 @@ const shutDown = async () => {
         app.use('/dolores/', doloresRecords);
         app.use('/gunnison/', gunnisonRecords);
         app.use('/dirty-devil/', dirtyDevilRecords);
+        app.use('/lower-san-juan/', lowerSanJuanRecords);
+        app.use('/upper-san-juan/', upperSanJuanRecords);
 
         // Error handling middleware
         app.use((err, req, res, next) => {

@@ -39,7 +39,13 @@ const Home: React.FC = () => {
         <div>
             <Navbar />
             <Slideshow images={images} interval={5000} />
-            <Textbox />
+            <Textbox>
+                Colorado River Data is a cohesive platform that was created for greater access to thorough water data for each major reservoir in the 
+                Colorado River Basin, as well as basin data for each respecitve subregion of the Colorado River Basin. This website provides a simple, 
+                easy-to-use service for obtaining water and weather trends, lake conditions, and atmospheric trends through a simplified user interface.
+                This includes daily elevation, storage, inflow/outflow, and weather data for each reservoir, as well as current snowpack and 
+                precipitation data trends for each subregion.
+            </Textbox>
         </div>
     );
 };

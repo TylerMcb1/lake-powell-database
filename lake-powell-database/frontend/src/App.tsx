@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Home from './pages/home';
+import About from './pages/about';
 
 // Reservoir Pages
 import LakePowell from './pages/reservoirs/lakePowell';
@@ -18,6 +19,8 @@ import ColoradoHeadwaters from './pages/basins/coloradoHeadwaters';
 import Dolores from './pages/basins/dolores';
 import Gunnison from './pages/basins/gunnison';
 import DirtyDevil from './pages/basins/dirtyDevil';
+import LowerSanJuan from './pages/basins/lowerSanJuan';
+import UpperSanJuan from './pages/basins/upperSanJuan';
 
 interface RouteType {
     path: string;
@@ -26,6 +29,7 @@ interface RouteType {
 
 const routes: RouteType[] = [
     { path: '/', element: <Home /> },
+    { path: '/about', element: <About /> },
     { path: '/reservoirs/lakepowell', element: <LakePowell /> },
     { path: '/reservoirs/lakemead', element: <LakeMead /> },
     { path: '/reservoirs/lakemohave', element: <LakeMohave /> },
@@ -37,6 +41,8 @@ const routes: RouteType[] = [
     { path: '/basins/upperdolores', element: <Dolores /> },
     { path: '/basins/gunnison', element: <Gunnison /> },
     { path: '/basins/dirtydevil', element: <DirtyDevil /> },
+    { path: '/basins/lowersanjuan', element: <LowerSanJuan /> },
+    { path: '/basins/uppersanjuan', element: <UpperSanJuan /> },
     // Include error 404 page
 ];
 
