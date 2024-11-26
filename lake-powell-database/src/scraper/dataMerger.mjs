@@ -33,7 +33,7 @@ const combineLakeData = (elevations, outflows, storage) => {
     return mergedData;
 };
 
-async function obtainLakeData (reservoirName, endpoint) {
+async function obtainLakeData (reservoirName, cutoff, endpoint) {
     try {
         const response = await axios.get('https://www.usbr.gov/lc/region/g4000/riverops/webreports/accumweb.json', {
             headers: { 'User-Agent': 'ColoradoRiverData/1.0 (ColoradoRiverData@gmail.com)' },
@@ -53,11 +53,15 @@ async function obtainLakeData (reservoirName, endpoint) {
 
         // Return merged JSON data
         const mergedData = combineLakeData(elevations, outflows, storage);
+
+        // Filter data to only include entries before cutoff date
+        const cutoffDate = new Date(cutoff);
+        const filteredData = mergedData.filter(entry => new Date(entry.date) > cutoffDate);
         
         // Post all data
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-        for (let i = 0; i < mergedData.length; i++) {
-            await axios.post(endpoint, mergedData[i])
+        for (let i = 0; i < filteredData.length; i++) {
+            await axios.post(endpoint, filteredData[i])
                 .then(response => {
                     console.log('POST request success: ', response.data);
                 })
@@ -66,18 +70,18 @@ async function obtainLakeData (reservoirName, endpoint) {
                 });
 
             // Sleep for 1 second before the next request
-            if (i < mergedData.length - 1) {
+            if (i < filteredData.length - 1) {
                 await sleep(1000);
             }
         }
 
-        return mergedData;
+        return filteredData;
     } catch (error) {
         console.error('Error obtaining JSON data: ', error.message);
     }
 };
 
-obtainLakeData('Lake Havasu', 'http://localhost:5050/havasu/new-reading')
+obtainLakeData('Lake Mead', '2024-11-17', 'http://localhost:5050/mead/new-reading')
     // .then(data => {
     //     console.log('Merged Data:', data);
     // }).catch(err => {
