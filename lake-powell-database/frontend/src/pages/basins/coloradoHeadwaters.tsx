@@ -17,7 +17,7 @@ const ColoradoHeadwaters = () => {
             <div className='m-4 grid grid-cols-1 gap-4 lg:grid-cols-2 md:mx-2 md:px-2'>
                 <BasinCurrent 
                     fetchString={TABLEFETCHSTRING}
-                    name='White Yampa Basin'
+                    name='Colorado Headwaters Basin'
                 />
                 <BasinGraphs
                     fetchString={HISTORICALFETCHSTRING}
@@ -26,7 +26,7 @@ const ColoradoHeadwaters = () => {
             <BasinChart 
                 fetchCurrentString={CHARTFETCHSTRING}
                 fetchHistoricalString={CHARTFETCHSTRING}
-                name='White Yampa Basin'
+                name='Colorado Headwaters Basin'
             />
             <Table 
                 fetchString={TABLEFETCHSTRING}

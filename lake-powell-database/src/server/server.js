@@ -13,6 +13,9 @@ import upperGreenRecords from './basins/upperGreen.js';
 import lowerGreenRecords from './basins/lowerGreen.js';
 import whiteYampaRecords from './basins/whiteYampa.js';
 import coloradoHeadwatersRecords from './basins/coloradoHeadwaters.js';
+import doloresRecords from './basins/dolores.js';
+import gunnisonRecords from './basins/gunnison.js';
+import dirtyDevilRecords from './basins/dirtyDevil.js';
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -55,6 +58,9 @@ const shutDown = async () => {
         app.use('/lower-green/', lowerGreenRecords);
         app.use('/white-yampa/', whiteYampaRecords);
         app.use('/colorado-headwaters/', coloradoHeadwatersRecords);
+        app.use('/dolores/', doloresRecords);
+        app.use('/gunnison/', gunnisonRecords);
+        app.use('/dirty-devil/', dirtyDevilRecords);
 
         // Error handling middleware
         app.use((err, req, res, next) => {

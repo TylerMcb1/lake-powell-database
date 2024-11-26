@@ -15,6 +15,9 @@ import UpperGreen from './pages/basins/upperGreen';
 import LowerGreen from './pages/basins/lowerGreen';
 import WhiteYampa from './pages/basins/whiteYampa';
 import ColoradoHeadwaters from './pages/basins/coloradoHeadwaters';
+import Dolores from './pages/basins/dolores';
+import Gunnison from './pages/basins/gunnison';
+import DirtyDevil from './pages/basins/dirtyDevil';
 
 interface RouteType {
     path: string;
@@ -30,7 +33,10 @@ const routes: RouteType[] = [
     { path: '/basins/uppergreen', element: <UpperGreen /> },
     { path: '/basins/lowergreen', element: <LowerGreen /> },
     { path: '/basins/whiteyampa', element: <WhiteYampa /> },
-    { path: '/basins/coloradoheadwaters', element: <ColoradoHeadwaters /> }
+    { path: '/basins/coloradoheadwaters', element: <ColoradoHeadwaters /> },
+    { path: '/basins/upperdolores', element: <Dolores /> },
+    { path: '/basins/gunnison', element: <Gunnison /> },
+    { path: '/basins/dirtydevil', element: <DirtyDevil /> },
     // Include error 404 page
 ];
 
