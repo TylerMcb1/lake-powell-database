@@ -34,7 +34,9 @@ const BasinGraph: React.FC<BasinGraphObject> = ({ fetchString }) => {
     const currYear = new Date().getFullYear();
     const prevYear = new Date().getFullYear() - 1;
 
-    const [readings, setReadings] = useState<BasinReading[]>([]);
+    const [currYearReadings, setCurrYearReadings] = useState<BasinReading[]>([]);
+    const [prevYearReadings, setPrevYearReadings] = useState<BasinReading[]>([]);
+
     const [precipitationData, setPrecipitationData] = useState<GraphData>({
         labels: [] as string[],
         datasets: []
@@ -45,33 +47,50 @@ const BasinGraph: React.FC<BasinGraphObject> = ({ fetchString }) => {
     });
 
     useEffect(() => {
-        const fetchBasinData = async () => {
+        const fetchHistoricalBasinData = async () => {
             try {
-                const response = await axios.get(fetchString);
-                setReadings(response.data);
+                const response = await axios.get(fetchString, {
+                    params: {
+                        startDate: new Date(`01-01-${prevYear}`),
+                        endDate: new Date(`01-01-${currYear}`)
+                    }
+                });
+                setPrevYearReadings(response.data);
             } catch (e) {
                 console.error('Unsucessful retrieval of database');
                 throw new Error(`Fetch Error: ${e}`)
             }
         };
 
-        fetchBasinData();
+        const fetchCurrentBasinData = async () => {
+            try {
+                const response = await axios.get(fetchString, {
+                    params: {
+                        startDate: new Date(`01-01-${currYear}`),
+                        endDate: new Date()
+                    }
+                });
+                setCurrYearReadings(response.data);
+            } catch (e) {
+                console.error('Unsucessful retrieval of database');
+                throw new Error(`Fetch Error: ${e}`)
+            }
+        }
+
+        fetchHistoricalBasinData();
+        fetchCurrentBasinData();
 
     }, []);
 
     const setData = (key: keyof BasinReading) => {
         const maxPrevYearData: number = Math.max(
-            ...readings
-                .filter(reading => new Date(reading._id)
-                .getFullYear() === prevYear)
+            ...prevYearReadings
                 .map(reading => reading[key])
                 .map(value => (typeof value === "string" && !isNaN(Number(value)) ? Number(value) : value))
                 .filter(value => typeof value === "number" && value !== null)
         );
         const maxCurrYearData: number = Math.max(
-            ...readings
-                .filter(reading => new Date(reading._id)
-                .getFullYear() === currYear)
+            ...currYearReadings
                 .map(reading => reading[key])
                 .map(value => (typeof value === "string" && !isNaN(Number(value)) ? Number(value) : value))
                 .filter(value => typeof value === "number" && value !== null)
@@ -81,7 +100,6 @@ const BasinGraph: React.FC<BasinGraphObject> = ({ fetchString }) => {
     };
 
     useEffect(() => {
-
         const updateGraphData = (key: keyof BasinReading): GraphData => {
             const { maxPrevYearData, maxCurrYearData } = setData(key);
             return{
@@ -108,7 +126,7 @@ const BasinGraph: React.FC<BasinGraphObject> = ({ fetchString }) => {
         setPrecipitationData(updateGraphData('Precipitation Accumulation'));
         setSnowWaterData(updateGraphData('Snow Water Equivalent'));
 
-    }, [readings]);
+    }, [currYearReadings, prevYearReadings]);
 
     return (
         <div className='text-dark_gray text-subtitle rounded-lg'>

@@ -11,6 +11,8 @@ import havasuRecords from './reservoirs/havasu.js';
 // Import basin records
 import upperGreenRecords from './basins/upperGreen.js';
 import lowerGreenRecords from './basins/lowerGreen.js';
+import whiteYampaRecords from './basins/whiteYampa.js';
+import coloradoHeadwatersRecords from './basins/coloradoHeadwaters.js';
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -51,6 +53,8 @@ const shutDown = async () => {
         // Mount basin records on respective path
         app.use('/upper-green/', upperGreenRecords);
         app.use('/lower-green/', lowerGreenRecords);
+        app.use('/white-yampa/', whiteYampaRecords);
+        app.use('/colorado-headwaters/', coloradoHeadwatersRecords);
 
         // Error handling middleware
         app.use((err, req, res, next) => {

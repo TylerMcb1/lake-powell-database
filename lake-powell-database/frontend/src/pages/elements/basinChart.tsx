@@ -106,8 +106,7 @@ const BasinChart: React.FC<BasinChartObject> = ({ fetchCurrentString, fetchHisto
     useEffect(() => {
         const fetchChartData = async () => {
             try {
-                const response = await axios.get(fetchCurrentString)
-                console.log(response.data);
+                const response = await axios.get(fetchCurrentString);
                 setReadings(response.data)
             } catch (e) {
                 console.error('Unsucessful retrieval of database');

@@ -6,7 +6,7 @@ const router = express.Router();
 router.get('/last-14-days', async(req, res) => {
     try {
         const db = getDB();
-        let collection = await db.collection('LowerGreen');
+        let collection = await db.collection('ColoradoHeadwaters');
 
         let pipeline = [
             { $match: { Date: { $gt: new Date(new Date().setDate(new Date().getDate() - 15)) } } },
@@ -31,7 +31,7 @@ router.get('/last-14-days', async(req, res) => {
 router.get('/last-365-days', async(req, res) => {
     try {
         const db = getDB();
-        let collection = await db.collection('LowerGreen');
+        let collection = await db.collection('ColoradoHeadwaters');
 
         let pipeline = [
             { $match: { Date: { $gt: new Date(new Date().setDate(new Date().getDate() - 365)) } } },
@@ -62,7 +62,7 @@ router.get('/historical', async(req, res) => {
         }
 
         const db = getDB();
-        let collection = await db.collection('LowerGreen');
+        let collection = await db.collection('ColoradoHeadwaters');
 
         let pipeline = [
             { $match: { Date: { $gte: new Date(startDate), $lte: new Date(endDate) } } },

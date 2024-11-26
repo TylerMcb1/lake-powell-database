@@ -67,7 +67,6 @@ const BasinCurrent: React.FC<BasinCurrentObject> = ({ fetchString, name }) => {
 
     // Display Up, Down, or Neutral arrow for reading component
     const displayArrow = (percent: number): React.ReactNode => {
-        console.log('percentage:' + percent)
         if (percent > 0) {
             return <img src={upArrow} alt='Up Arrow' className='inline-block w-4 h-4 ml-2'/>;
         } else if (percent < 0) {

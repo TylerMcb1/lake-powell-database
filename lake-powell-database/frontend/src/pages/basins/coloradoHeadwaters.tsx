@@ -6,18 +6,18 @@ import BasinChart from '../elements/basinChart';
 import Table from '../elements/table';
 
 // Fetch Strings
-const TABLEFETCHSTRING = 'http://localhost:5050/lower-green/last-14-days';
-const CHARTFETCHSTRING = 'http://localhost:5050/lower-green/last-365-days';
-const HISTORICALFETCHSTRING = 'http://localhost:5050/lower-green/historical';
+const TABLEFETCHSTRING = 'http://localhost:5050/colorado-headwaters/last-14-days';
+const CHARTFETCHSTRING = 'http://localhost:5050/colorado-headwaters/last-365-days';
+const HISTORICALFETCHSTRING = 'http://localhost:5050/colorado-headwaters/historical';
 
-const LowerGreen = () => {
+const ColoradoHeadwaters = () => {
     return (
         <div>
             <Navbar />
             <div className='m-4 grid grid-cols-1 gap-4 lg:grid-cols-2 md:mx-2 md:px-2'>
                 <BasinCurrent 
                     fetchString={TABLEFETCHSTRING}
-                    name='Lower Green Basin'
+                    name='White Yampa Basin'
                 />
                 <BasinGraphs
                     fetchString={HISTORICALFETCHSTRING}
@@ -26,7 +26,7 @@ const LowerGreen = () => {
             <BasinChart 
                 fetchCurrentString={CHARTFETCHSTRING}
                 fetchHistoricalString={CHARTFETCHSTRING}
-                name='Lower Green Basin'
+                name='White Yampa Basin'
             />
             <Table 
                 fetchString={TABLEFETCHSTRING}
@@ -36,4 +36,4 @@ const LowerGreen = () => {
     );
 };
 
-export default LowerGreen;
+export default ColoradoHeadwaters;

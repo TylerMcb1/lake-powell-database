@@ -8,6 +8,7 @@ import Table from '../elements/table';
 // Fetch Strings
 const TABLEFETCHSTRING = 'http://localhost:5050/upper-green/last-14-days';
 const CHARTFETCHSTRING = 'http://localhost:5050/upper-green/last-365-days';
+const HISTORICALFETCHSTRING = 'http://localhost:5050/upper-green/historical';
 
 const UpperGreen = () => {
     return (
@@ -15,11 +16,11 @@ const UpperGreen = () => {
             <Navbar />
             <div className='m-4 grid grid-cols-1 gap-4 lg:grid-cols-2 md:mx-2 md:px-2'>
                 <BasinCurrent 
-                    fetchString={CHARTFETCHSTRING} // Replace w table fetch
+                    fetchString={TABLEFETCHSTRING}
                     name='Upper Green Basin'
                 />
                 <BasinGraphs
-                    fetchString={CHARTFETCHSTRING}
+                    fetchString={HISTORICALFETCHSTRING}
                 />
             </div>
             <BasinChart 
@@ -28,7 +29,7 @@ const UpperGreen = () => {
                 name='Upper Green Basin'
             />
             <Table 
-                fetchString={CHARTFETCHSTRING} // Replace w table fetch
+                fetchString={TABLEFETCHSTRING}
                 type='basin'
             />
         </div>

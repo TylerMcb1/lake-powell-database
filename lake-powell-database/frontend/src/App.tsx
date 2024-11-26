@@ -13,6 +13,8 @@ import LakeHavasu from './pages/reservoirs/lakeHavasu';
 // Basin Pages
 import UpperGreen from './pages/basins/upperGreen';
 import LowerGreen from './pages/basins/lowerGreen';
+import WhiteYampa from './pages/basins/whiteYampa';
+import ColoradoHeadwaters from './pages/basins/coloradoHeadwaters';
 
 interface RouteType {
     path: string;
@@ -21,12 +23,14 @@ interface RouteType {
 
 const routes: RouteType[] = [
     { path: '/', element: <Home /> },
-    { path: '/reservoirs/lakepowell', element: <LakePowell />},
-    { path: '/reservoirs/lakemead', element: <LakeMead />},
-    { path: '/reservoirs/lakemohave', element: <LakeMohave />},
-    { path: '/reservoirs/lakehavasu', element: <LakeHavasu />},
-    { path: '/basins/uppergreen', element: <UpperGreen />},
-    { path: '/basins/lowergreen', element: <LowerGreen />},
+    { path: '/reservoirs/lakepowell', element: <LakePowell /> },
+    { path: '/reservoirs/lakemead', element: <LakeMead /> },
+    { path: '/reservoirs/lakemohave', element: <LakeMohave /> },
+    { path: '/reservoirs/lakehavasu', element: <LakeHavasu /> },
+    { path: '/basins/uppergreen', element: <UpperGreen /> },
+    { path: '/basins/lowergreen', element: <LowerGreen /> },
+    { path: '/basins/whiteyampa', element: <WhiteYampa /> },
+    { path: '/basins/coloradoheadwaters', element: <ColoradoHeadwaters /> }
     // Include error 404 page
 ];
 
