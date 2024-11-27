@@ -1,6 +1,6 @@
 version: 1.0.0
 applications:
-  - appRoot: my-app
+  - appRoot: frontend
     frontend:
       phases:
         preBuild:
