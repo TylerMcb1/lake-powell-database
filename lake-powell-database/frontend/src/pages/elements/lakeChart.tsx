@@ -224,7 +224,7 @@ const LakeChart: React.FC<LakeChartObject> = ({ fetchString, name }) => {
                 referenceDate.setDate(referenceDate.getDate() - selectedDateRange);
                 return currDate >= referenceDate;
             })
-            .map(reading => typeof reading[field] === 'number' ? reading[field] : 0)
+            .map(reading => reading[field] as number || 0) // Type casted
             .reverse();
     };
 

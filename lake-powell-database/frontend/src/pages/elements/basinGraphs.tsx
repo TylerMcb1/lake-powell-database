@@ -86,14 +86,12 @@ const BasinGraph: React.FC<BasinGraphObject> = ({ fetchString }) => {
         const maxPrevYearData: number = Math.max(
             ...prevYearReadings
                 .map(reading => reading[key])
-                .map(value => (typeof value === "string" && !isNaN(Number(value)) ? Number(value) : value))
-                .filter(value => typeof value === "number" && value !== null)
+                .map(reading => reading as number || 0) // Type casted
         );
         const maxCurrYearData: number = Math.max(
             ...currYearReadings
                 .map(reading => reading[key])
-                .map(value => (typeof value === "string" && !isNaN(Number(value)) ? Number(value) : value))
-                .filter(value => typeof value === "number" && value !== null)
+                .map(reading => reading as number || 0) // Type casted
         );
 
         return { maxPrevYearData, maxCurrYearData };

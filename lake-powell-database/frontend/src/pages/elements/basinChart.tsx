@@ -217,15 +217,16 @@ const BasinChart: React.FC<BasinChartObject> = ({ fetchCurrentString, fetchHisto
     // };
 
     const setData = (field: keyof BasinReading): number[] => {
-        return readings
+        const filteredReadings: number[] = readings
             .filter(reading => {
                 const currDate = new Date(reading['_id']);
                 const referenceDate = new Date(readings[0]['_id']);
                 referenceDate.setDate(referenceDate.getDate() - selectedDateRange);
                 return currDate >= referenceDate;
             })
-            .map(reading => typeof reading[field] === 'number' ? reading[field] : 0)
+            .map(reading => reading[field] as number || 0) // Type casted
             .reverse();
+        return filteredReadings
     };
 
     const setDates = (): string[] => {
