@@ -8,9 +8,9 @@ import BasinChart from '../elements/basinChart';
 import Table from '../elements/table';
 
 // Fetch Strings
-const TABLEFETCHSTRING = import.meta.env.VITE_UPPERGREEN_TABLEFETCHSTRING || '';
-const CHARTFETCHSTRING = import.meta.env.VITE_UPPERGREEN_CHARTFETCHSTRING || '';
-const HISTORICALFETCHSTRING = import.meta.env.VITE_UPPERGREEN_HISTORICALFETCHSTRING || '';
+const TABLEFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/upper-green/last-14-days';
+const CHARTFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/upper-green/last-365-days';
+const HISTORICALFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/upper-green/historical';
 
 const UpperGreen: React.FC = () => {
     return (

@@ -8,11 +8,11 @@ import LakeChart from '../elements/lakeChart';
 import Table from '../elements/table';
 
 // Fetch Strings
-const CHARTFETCHSTRING = import.meta.env.VITE_HAVASU_CHARTFETCHSTRING || '';
-const TABLEFETCHSTRING = import.meta.env.VITE_HAVASU_TABLEFETCHSTRING || '';
-const WEATHERSTRING = import.meta.env.VITE_HAVASU_WEATHERSTRING || '';
-const SUNRISESUNSETSTRING = import.meta.env.VITE_HAVASU_SUNRISESUNSETSTRING || '';
-const ALERTSTRING = import.meta.env.VITE_HAVASU_ALERTSTRING || '';
+const CHARTFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/havasu/last-365-days';
+const TABLEFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/havasu/last-14-days';
+const WEATHERSTRING = import.meta.env.VITE_BACKEND_URL + '/havasu/weather';
+const SUNRISESUNSETSTRING = import.meta.env.VITE_BACKEND_URL + '/havasu/sunrise-sunset';
+const ALERTSTRING = import.meta.env.VITE_BACKEND_URL + '/havasu/alerts';
 
 const LakeHavasu: React.FC = () => {
     return (

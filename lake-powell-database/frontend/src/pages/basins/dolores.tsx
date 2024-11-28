@@ -8,9 +8,9 @@ import BasinChart from '../elements/basinChart';
 import Table from '../elements/table';
 
 // Fetch Strings
-const TABLEFETCHSTRING = import.meta.env.VITE_DOLORES_TABLEFETCHSTRING || '';
-const CHARTFETCHSTRING = import.meta.env.VITE_DOLORES_CHARTFETCHSTRING || '';
-const HISTORICALFETCHSTRING = import.meta.env.VITE_DOLORES_HISTORICALFETCHSTRING || '';
+const TABLEFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/dolores/last-14-days';
+const CHARTFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/dolores/last-365-days';
+const HISTORICALFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/dolores/historical';
 
 const Dolores: React.FC = () => {
     return (

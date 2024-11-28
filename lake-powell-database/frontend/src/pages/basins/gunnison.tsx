@@ -8,9 +8,9 @@ import BasinChart from '../elements/basinChart';
 import Table from '../elements/table';
 
 // Fetch Strings
-const TABLEFETCHSTRING = import.meta.env.VITE_GUNNISON_TABLEFETCHSTRING || '';
-const CHARTFETCHSTRING = import.meta.env.VITE_GUNNISON_CHARTFETCHSTRING || '';
-const HISTORICALFETCHSTRING = import.meta.env.VITE_GUNNISON_HISTORICALFETCHSTRING || '';
+const TABLEFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/gunnison/last-14-days';
+const CHARTFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/gunnison/last-365-days';
+const HISTORICALFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/gunnison/historical';
 
 const Gunnison: React.FC = () => {
     return (

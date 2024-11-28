@@ -8,11 +8,11 @@ import LakeChart from '../elements/lakeChart';
 import Table from '../elements/table';
 
 // Fetch Strings
-const CHARTFETCHSTRING = import.meta.env.VITE_MEAD_CHARTFETCHSTRING || '';
-const TABLEFETCHSTRING = import.meta.env.VITE_MEAD_TABLEFETCHSTRING || '';
-const WEATHERSTRING = import.meta.env.VITE_MEAD_WEATHERSTRING || '';
-const SUNRISESUNSETSTRING = import.meta.env.VITE_MEAD_SUNRISESUNSETSTRING || '';
-const ALERTSTRING = import.meta.env.VITE_MEAD_ALERTSTRING || '';
+const CHARTFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/mead/last-365-days';
+const TABLEFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/mead/last-14-days';
+const WEATHERSTRING = import.meta.env.VITE_BACKEND_URL + '/mead/weather';
+const SUNRISESUNSETSTRING = import.meta.env.VITE_BACKEND_URL + '/mead/sunrise-sunset';
+const ALERTSTRING = import.meta.env.VITE_BACKEND_URL + '/mead/alerts';
 
 const LakeMead: React.FC = () => {
     return (

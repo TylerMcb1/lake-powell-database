@@ -8,9 +8,9 @@ import BasinChart from '../elements/basinChart';
 import Table from '../elements/table';
 
 // Fetch Strings
-const TABLEFETCHSTRING = import.meta.env.VITE_COLORADOHEADWATERS_TABLEFETCHSTRING || '';
-const CHARTFETCHSTRING = import.meta.env.VITE_COLORADOHEADWATERS_CHARTFETCHSTRING || '';
-const HISTORICALFETCHSTRING = import.meta.env.VITE_COLORADOHEADWATERS_HISTORICALFETCHSTRING || '';
+const TABLEFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/colorado-headwaters/last-14-days';
+const CHARTFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/colorado-headwaters/last-365-days';
+const HISTORICALFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/colorado-headwaters/historical';
 
 const ColoradoHeadwaters: React.FC = () => {
     return (

@@ -8,9 +8,9 @@ import BasinChart from '../elements/basinChart';
 import Table from '../elements/table';
 
 // Fetch Strings
-const TABLEFETCHSTRING = import.meta.env.VITE_DIRTYDEVIL_TABLEFETCHSTRING || '';
-const CHARTFETCHSTRING = import.meta.env.VITE_DIRTYDEVIL_CHARTFETCHSTRING || '';
-const HISTORICALFETCHSTRING = import.meta.env.VITE_DIRTYDEVIL_HISTORICALFETCHSTRING || '';
+const TABLEFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/dirty-devil/last-14-days';
+const CHARTFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/dirty-devil/last-365-days';
+const HISTORICALFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/dirty-devil/historical';
 
 const DirtyDevil: React.FC = () => {
     return (

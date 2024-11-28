@@ -8,9 +8,9 @@ import BasinChart from '../elements/basinChart';
 import Table from '../elements/table';
 
 // Fetch Strings
-const TABLEFETCHSTRING = import.meta.env.VITE_UPPERSANJUAN_TABLEFETCHSTRING || '';
-const CHARTFETCHSTRING = import.meta.env.VITE_UPPERSANJUAN_CHARTFETCHSTRING || '';
-const HISTORICALFETCHSTRING = import.meta.env.VITE_UPPERSANJUAN_HISTORICALFETCHSTRING || '';
+const TABLEFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/upper-san-juan/last-14-days';
+const CHARTFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/upper-san-juan/last-365-days';
+const HISTORICALFETCHSTRING = import.meta.env.VITE_BACKEND_URL + '/upper-san-juan/historical';
 
 const UpperSanJuan: React.FC = () => {
     return (
