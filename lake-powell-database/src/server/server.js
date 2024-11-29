@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import https from 'https';
+import fs from 'fs';
 import { openConnection, closeConnection } from './connection.js';
 
 // Import reservoir records
@@ -22,7 +24,11 @@ import upperSanJuanRecords from './basins/upperSanJuan.js';
 const PORT = process.env.PORT || 5050;
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: 'https://coloradoriverdata.com',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+}));
 app.use(express.json());
 
 let server;
@@ -44,10 +50,40 @@ const shutDown = async () => {
     }
 }
 
+const basicAuth = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        res.status(401).send('Authentication required');
+        return;
+    }
+
+    const encoded = authHeader.split(' ')[1];
+    const decoded = Buffer.from(encoded, 'base64').toString();
+    const [username, password] = decoded.split(':');
+
+    if (username === process.env.AUTH_USER && password === process.env.AUTH_PASS) {
+        next();
+    } else {
+        res.status(401).send('Invalid credentials');
+    }
+};
+
+// HTTPS Enforcing middleware
+app.use((req, res, next) => {
+    if (req.protocol === 'http') {
+        res.redirect(`https://${process.env.HOST_URL}`);
+    }
+    next();
+});
+
 // Start the Express server
 (async () => {
     try {
         await openConnection();
+
+        // Middleware to enforce basic authentication
+        app.use(basicAuth);
 
         // Mount reservoir records on respective path
         app.use('/powell/', powellRecords);
@@ -76,16 +112,22 @@ const shutDown = async () => {
                 error: err.message
             });
         });
-        
-        // Start server instance
-        server = app.listen(PORT, () => {
+
+        // Load SSL key and certificate
+        const options = {
+            key: fs.readFileSync('server.key'),
+            cert: fs.readFileSync('server.crt')
+        };
+
+        // Create the HTTPS server with Express app
+        server = https.createServer(options, app).listen(PORT, () => {
             console.log(`Server listening on port ${PORT}`);
         });
 
         // Listen for keyboard interruption signal
         process.on('SIGINT', shutDown); // CTRL + C
     } catch (e) {
-        console.error("Failed to connect to the database. Server not started.");
+        console.error("Failed to connect to the database:", e);
         process.exit(1);
     }
 })();
