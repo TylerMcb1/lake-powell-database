@@ -57,6 +57,20 @@ const FieldOptions: TableField[] = [
     { key: 'Storage', value: 'Storage (af)' }
 ];
 
+interface ConfigObject {
+    auth: {
+        username: string;
+        password: string;
+    };
+}
+
+const config: ConfigObject = {
+    auth: {
+        username: process.env.AUTH_USER || '',
+        password: process.env.AUTH_PASS || ''
+    }
+};
+
 interface LakeChartObject {
     fetchString: string;
     name: string;
@@ -84,7 +98,6 @@ const LakeChart: React.FC<LakeChartObject> = ({ fetchString, name }) => {
     // const [historicalEndDate, setHistoricalEndDate] = useState<string>('');
     const [displayCurrent, setDisplayCurrent] = useState<boolean>(true);
     
-
     // Readings and Chart Data
     const [readings, setReadings] = useState<Reading[]>([]);
     const [chartData, setChartData] = useState<ChartData>({
@@ -105,7 +118,7 @@ const LakeChart: React.FC<LakeChartObject> = ({ fetchString, name }) => {
     useEffect(() => {
         const fetchChartData = async () => {
             try {
-                const response = await axios.get(fetchString)
+                const response = await axios.get(fetchString, config)
                 setReadings(response.data)
             } catch (e) {
                 console.error('Unsucessful retrieval of database');

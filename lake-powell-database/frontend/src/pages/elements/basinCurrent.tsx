@@ -14,6 +14,20 @@ interface BasinReading {
     "Precipitation % of Median": number;
 };
 
+interface ConfigObject {
+    auth: {
+        username: string;
+        password: string;
+    };
+}
+
+const config: ConfigObject = {
+    auth: {
+        username: process.env.AUTH_USER || '',
+        password: process.env.AUTH_PASS || ''
+    }
+};
+
 interface BasinCurrentObject {
     fetchString: string;
     name: string;
@@ -29,7 +43,7 @@ const BasinCurrent: React.FC<BasinCurrentObject> = ({ fetchString, name }) => {
     useEffect(() => {
         const getCurrYearData = async () => {
             try {
-                const response = await axios.get(fetchString);
+                const response = await axios.get(fetchString, config);
 
                 // Type check response.data
                 if (Array.isArray(response.data)) {

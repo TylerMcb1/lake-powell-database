@@ -19,12 +19,6 @@ import night from '../../assets/weather/night.svg';
 import mostlyCloudyNight from '../../assets/weather/mostlyCloudyNight.svg';
 import partlyCloudyNight from '../../assets/weather/partlyCloudyNight.svg';
 
-interface WeatherObject {
-    fetchWeatherString: string;
-    fetchSSString: string;
-    fetchAlertsString: string;
-};
-
 interface Alert {
     name: string;
     link: string;
@@ -75,6 +69,26 @@ const NightConditionIcons: Record<string, string> = {
     'hail': hail,
     'snow': snow,
     'windy': windy,
+};
+
+interface ConfigObject {
+    auth: {
+        username: string;
+        password: string;
+    };
+}
+
+const config: ConfigObject = {
+    auth: {
+        username: process.env.AUTH_USER || '',
+        password: process.env.AUTH_PASS || ''
+    }
+};
+
+interface WeatherObject {
+    fetchWeatherString: string;
+    fetchSSString: string;
+    fetchAlertsString: string;
 };
 
 const Weather: React.FC<WeatherObject> = ({ fetchWeatherString, fetchSSString, fetchAlertsString }) => {

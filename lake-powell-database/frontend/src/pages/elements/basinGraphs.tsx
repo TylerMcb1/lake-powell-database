@@ -50,6 +50,10 @@ const BasinGraph: React.FC<BasinGraphObject> = ({ fetchString }) => {
         const fetchHistoricalBasinData = async () => {
             try {
                 const response = await axios.get(fetchString, {
+                    auth: {
+                        username: process.env.AUTH_USER || '',
+                        password: process.env.AUTH_PASS || ''
+                    },
                     params: {
                         startDate: new Date(`01-01-${prevYear}`),
                         endDate: new Date(`01-01-${currYear}`)
@@ -65,6 +69,10 @@ const BasinGraph: React.FC<BasinGraphObject> = ({ fetchString }) => {
         const fetchCurrentBasinData = async () => {
             try {
                 const response = await axios.get(fetchString, {
+                    auth: {
+                        username: process.env.AUTH_USER || '',
+                        password: process.env.AUTH_PASS || ''
+                    },
                     params: {
                         startDate: new Date(`01-01-${currYear}`),
                         endDate: new Date()

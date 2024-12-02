@@ -58,6 +58,20 @@ const FieldOptions: TableField[] = [
 
 ];
 
+interface ConfigObject {
+    auth: {
+        username: string;
+        password: string;
+    };
+}
+
+const config: ConfigObject = {
+    auth: {
+        username: process.env.AUTH_USER || '',
+        password: process.env.AUTH_PASS || ''
+    }
+};
+
 interface BasinChartObject {
     fetchCurrentString: string;
     fetchHistoricalString: string;
@@ -106,7 +120,7 @@ const BasinChart: React.FC<BasinChartObject> = ({ fetchCurrentString, fetchHisto
     useEffect(() => {
         const fetchChartData = async () => {
             try {
-                const response = await axios.get(fetchCurrentString);
+                const response = await axios.get(fetchCurrentString, config);
                 setReadings(response.data)
             } catch (e) {
                 console.error('Unsucessful retrieval of database');

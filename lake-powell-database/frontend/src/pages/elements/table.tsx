@@ -28,11 +28,6 @@ interface TableField {
     value: string;
 };
 
-interface TableObject {
-    fetchString: string;
-    type: string;
-};
-
 const LakeFields: TableField[] = [
     {key: 'Date', value: 'Date'},
     {key: 'Water Level', value: 'Elevation (feet)'},
@@ -49,6 +44,25 @@ const BasinFields: TableField[] = [
     {key: 'Daily Precipitation', value: 'Precipitation Increment'}
 ];
 
+interface ConfigObject {
+    auth: {
+        username: string;
+        password: string;
+    };
+}
+
+const config: ConfigObject = {
+    auth: {
+        username: process.env.AUTH_USER || '',
+        password: process.env.AUTH_PASS || ''
+    }
+};
+
+interface TableObject {
+    fetchString: string;
+    type: string;
+};
+
 const Table: React.FC<TableObject> = ({ fetchString, type }) => {
     // Readings and Chart Data
     const [readings, setReadings] = useState<(LakeReading | BasinReading)[]>([]);
@@ -57,7 +71,7 @@ const Table: React.FC<TableObject> = ({ fetchString, type }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(fetchString);
+                const response = await axios.get(fetchString, config);
                 setReadings(response.data);
             } catch (e) {
                 console.error('Unsucessful retrieval of database');

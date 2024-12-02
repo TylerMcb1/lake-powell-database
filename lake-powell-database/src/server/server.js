@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import https from 'https';
-import fs from 'fs';
+import http from 'http';
 import { openConnection, closeConnection } from './connection.js';
 
 // Import reservoir records
@@ -66,16 +65,17 @@ const basicAuth = (req, res, next) => {
         next();
     } else {
         res.status(401).send('Invalid credentials');
+        return;
     }
 };
 
 // HTTPS Enforcing middleware
-app.use((req, res, next) => {
-    if (req.protocol === 'http') {
-        res.redirect(`https://${process.env.HOST_URL}`);
-    }
-    next();
-});
+// app.use((req, res, next) => {
+//     if (req.protocol === 'http') {
+//         res.redirect(`https://${process.env.HOST_URL}`);
+//     }
+//     next();
+// });
 
 // Start the Express server
 (async () => {
@@ -111,16 +111,11 @@ app.use((req, res, next) => {
                 message: 'An error occurred on the server.',
                 error: err.message
             });
+            next();
         });
 
-        // Load SSL key and certificate
-        const options = {
-            key: fs.readFileSync('server.key'),
-            cert: fs.readFileSync('server.crt')
-        };
-
         // Create the HTTPS server with Express app
-        server = https.createServer(options, app).listen(PORT, () => {
+        server = app.listen(PORT, () => {
             console.log(`Server listening on port ${PORT}`);
         });
 
